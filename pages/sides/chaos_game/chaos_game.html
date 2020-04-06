@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang='en-US'>
+<head>
+  <title>Random Jumps</title>
+  <meta name='author' content='Sean' />
+  <link rel='stylesheet' type='text/css' href='../../../css/sides.css' />
+  <!-- Adding Popup Explanation-->
+  <script id='js' type='text/javascript' src='../../../js/add_popup.js'></script>
+  <script>
+    addPopup([
+      'This page is my version of the famous Chaos game! An exploration of\
+      fractals and their generators',
+      'Pick a polygon on the side and then pick a ratio, and commence.\
+      Your point starts in the middle, and each time you click the canvas,\
+      the program will choose a random edge of the polygon and move ratio of\
+      the total distance towards the chosen edge.',
+      "Movie will jump for you quickly! Or if you can't wait, jump 10,000!"
+    ]);
+  </script>
+  <link rel="stylesheet" type="text/css" href="../../../css/popup.css" />
+</head>
+<body>
+  <p>Start in the center,
+    pick a random verticie and move half the distance towards it </p>
+  <div id='sidenav'>
+    <button type='button' onclick='setUp(3);'>Triangle</button>
+    <button type='button' onclick='setUp(4);'>Square</button>
+    <button type='button' onclick='setUp(5);'>Pentagon</button>
+    <button type='button' onclick='setUp(6);'>Heptagon</button>
+    <button type='button' onclick='setUp(7);'>Septagon</button>
+    <button type='button' onclick='setUp(8);'>Octagon</button>
+    <button type='button' onclick='setUp(9);'>Nonagon</button>
+    <button type='button' onclick='setUp(10);'>Decagon</button>
+    <button type='button' onclick='setUp(11);'>Hendecagon</button>
+    <button type='button' onclick='setUp(12);'>Dodecagon</button>
+    <button type='button' onclick='makeCircle();'>Circle</button>
+    <br />
+    <p>Enter a Ratio:</p>
+    <input type="text" id="numerator" value="1" /><p> / </p>
+    <input type="text" id="denominator" value="2" />
+    <button type="button" onclick="getRatio();">Change Ratio</button>
+    <p>Movie Tools!</p>
+    <button type='button' onclick='jumpALot();'>Jump 10,000</button>
+    <input type="text" id="inputSpeed" value="50">
+    <button type="button" onclick="WAITTIME = parseInt(document.getElementById('inputSpeed').value);">Change Movie Speed</button>
+    <button type="button" onclick="animating = true; movie();">Movie</button>
+    <button type="button" onclick="animating = false;">Stop Movie</button>
+    <p>Some fun Ones</p>
+    <button type='button' onclick='setUp(3);setToRatio("1", "2");'>Sierpinski</button>
+    <button type='button' onclick='setUp(4);setToRatio("10", "19");'>Infinity Cube</button>
+    <button type='button' onclick='setUp(8);setToRatio("2", "3");'>Snowflake</button>
+  </div>
+
+  <canvas id='canvas'  width='1400' height='750' style='border:0px;'></canvas>
+  <script type="text/javascript" src="../../../js/drawing_lib.js"></script>
+
+  <script type='text/javascript'>
+    const canvas = new Canvas('canvas');
+    var SHAPE = -1;
+    var animating = false, WAITTIME = 50;
+    const radius = canvas.height/2 - 10;
+    var x = canvas.width/2, y = canvas.height/2;
+    var verticies = [], ratio = 1/2;
+    setUp(3);
+
+    function changeJumpDist() {
+      let numVert = parseInt(document.getElementById("input_shape").value);
+    }
+
+    function setUp(numVerticies) {
+      x = canvas.width/2;
+      y = canvas.height/2;
+      verticies = [];
+      canvas.clear();
+      SHAPE = numVerticies;
+      var theta = 0;
+      for (let i = 0; i < SHAPE; i++) {
+        let vert_x = x + radius * Math.sin(theta);
+        let vert_y = y - radius * Math.cos(theta);
+        verticies.push([vert_x, vert_y]);
+        canvas.drawPoint(vert_x, vert_y, 2);
+        theta += 2 * Math.PI / numVerticies;
+      }
+    }
+
+    // pick a pointe at random and move ratio of the way towards it
+    function jump() {
+      canvas.drawPoint(x, y, 1);
+      var index = Math.floor(Math.random() * SHAPE);
+      x = verticies[index][0] * ratio + x * (1 - ratio);
+      y = verticies[index][1] * ratio + y * (1 - ratio);
+    }
+
+    function jumpALot() {
+      for (let i = 0; i < 10000; i++) { jump(); }
+    }
+
+    function makeCircle() {
+      x = canvas.width/2;
+      y = canvas.height/2;
+      verticies = [];
+      canvas.clear();
+      SHAPE = 5000;
+      var theta = 0;
+      for (let i = 0; i < SHAPE; i++) {
+        let vert_x = x + radius * Math.sin(theta);
+        let vert_y = y - radius * Math.cos(theta);
+        verticies.push([vert_x, vert_y]);
+        theta += 2 * Math.PI / SHAPE;
+      }
+      canvas.drawArc(canvas.width/2, canvas.height/2, radius);
+    }
+
+    function getRatio() {
+      let numerator = parseFloat(document.getElementById("numerator").value);
+      let denominator = parseFloat(document.getElementById("denominator").value);
+      ratio = numerator / denominator;
+    }
+
+    function setToRatio(num, den) {
+      document.getElementById("numerator").value = num;
+      document.getElementById("denominator").value = den;
+      ratio = num / den;
+    }
+
+    function movie() {
+      jump();
+      if (movie) {
+        setTimeout(function(){
+          window.requestAnimationFrame(movie);
+        }, WAITTIME);
+      }
+    }
+
+    const side = document.getElementById('sidenav');
+    side.addEventListener("mouseover", () => { canvas.c.addEventListener("click", jump); } );
+    side.addEventListener("mouseout", () => { canvas.c.removeEventListener("click", jump); } );
+  </script>
+</body>
+</html>

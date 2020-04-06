@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<!-- Add movie that transitions between mutlipliers
+Probably go mult = mult + 1, but could do something more interesting
+Add movie that transitions between mods
+do a mod = mod + 1, but also a mod = mod * 2, that has a nice pattern
+since the existing lines always are kept -->
+<!-- http://xahlee.info/SpecialPlaneCurves_dir/Cardioid_dir/_p/LightsRaysReflections.pdf -->
+<html lang="en-US">
+<head>
+  <title>Multiplication Circle</title>
+  <meta name="author" content="Sean" />
+  <link rel="stylesheet" type="text/css" href="../../../css/sides.css" />
+  <!-- Adding Popup Explanation-->
+  <script id='js' type='text/javascript' src='../../../js/add_popup.js'></script>
+  <script>
+    addPopup([
+      'These circles are visualizations of modular multiplaction! \
+      Quite pretty indeed!',
+      'These circles start with MOD number of points, each with some index it \
+      represents. Then for each point, we calculate index of point times \
+      MULT mod MOD, and draw a line to the point with index equal to the result.',
+      'Mod movie slowly increases the mod being used, and Mult movie increases \
+      the multiplier.'
+    ]);
+  </script>
+  <link rel="stylesheet" type="text/css" href="../../../css/popup.css" />
+</head>
+<body>
+  <p>Pick a MOD and the MULTiple!</p>
+  <sidenav id='sidenav'>
+    <p>
+      Enumerate MOD number of points on a circle. For each point,
+      calculate the index of point * MULT mod MOD and draw a line to the point
+      with index of the result.
+    </p>
+    <input type="text" id="inputMod" value="1000" />
+    <button type="button" onclick="updateValues(); drawCircle();">Change Mod!</button>
+    <input type="text" id="inputMult" value="51" />
+    <button type="button" onclick="updateValues(); drawCircle();">Change Multiplier!</button>
+    <button type="button" onclick="movie = true; modMovie();">Mod Movie</button>
+    <button type="button" onclick="movie = true; multMovie();">Mult Movie</button>
+    <input type="text" id="inputSpeed" value="1000">
+    <button type="button" onclick="WAITTIME = parseInt(document.getElementById('inputSpeed').value);">Change Movie Speed</button>
+    <button type="button" onclick="movie = false;">Stop Movie</button>
+    <button type="button" onclick="movie = false;changeMod(10);changeMult(2);updateValues();drawCircle();">Reset Movie</button>
+
+    <button type="button" onclick="changeMod(300);changeMult(2);updateValues();drawCircle();">Cartoid</button>
+  </sidenav>
+
+  <canvas id="canvas"  width='1400' height='750'></canvas>
+  <script type="text/javascript" src="../../../js/drawing_lib.js"></script>
+  <script type="text/javascript">
+    const canvas = new Canvas('canvas');
+    var movie = false, WAITTIME = 1000;
+    var MOD = 1000, MULT = 51;
+    var verticies = [];
+    createCircle();
+    drawLines();
+
+    // creates a ring with MOD verticies
+    function createCircle() {
+      const x = canvas.width/2, y = canvas.height/2, radius = canvas.height/2 - 10;
+      verticies = [];
+      canvas.clear();
+      var theta = 0;
+      for (let i = 0; i < MOD; i++) {
+        let vert_x = x + radius * Math.sin(theta);
+        let vert_y = y - radius * Math.cos(theta);
+        verticies.push([vert_x, vert_y]);
+        canvas.drawPoint(vert_x, vert_y, 1.5);
+        theta += 2 * Math.PI / MOD;
+      }
+    }
+
+    // calcualtes i * MULT mod MOD for each i vert and
+    // draws a line to the result vert
+    function drawLines() {
+      for (let i = 0; i < verticies.length; i++) {
+        let neigh = (i * MULT) % MOD;
+        canvas.drawLine(verticies[i][0], verticies[i][1],
+                        verticies[neigh][0], verticies[neigh][1]);
+      }
+    }
+
+    function drawCircle() {
+      createCircle();
+      drawLines();
+    }
+
+    // change MOD and Mult to be equal to inputMod and inputMult
+    function updateValues() {
+      MOD = parseInt(document.getElementById("inputMod").value);
+      MULT = parseInt(document.getElementById("inputMult").value);
+
+    }
+
+    function changeMod(mod) {
+      document.getElementById("inputMod").value = String(mod);
+    }
+
+    function changeMult(mult) {
+      document.getElementById("inputMult").value = String(mult);
+    }
+
+    //
+    function modMovie() {
+      // setup
+      changeMod(MOD + 1);
+      updateValues();
+      drawCircle();
+      if (movie) {
+        setTimeout(function(){
+          window.requestAnimationFrame(modMovie);
+        }, WAITTIME);
+      }
+    }
+
+    function multMovie() {
+      // setup
+      changeMult(MULT + 1);
+      updateValues();
+      drawCircle();
+      if (movie) {
+        setTimeout(function(){
+          window.requestAnimationFrame(multMovie);
+        }, WAITTIME);
+      }
+    }
+
+  // add Event listeners!
+  // addClick();
+  // const side = document.getElementById('sidenav');
+  // side.addEventListener("mouseover", removeClick);
+  // side.addEventListener("mouseout", addClick);
+  //
+  // function addClick() {
+  //   c.addEventListener("click", drawLine);
+  // }
+  //
+  // function removeClick() {
+  //   c.removeEventListener("click", drawLine);
+  // }
+
+  </script>
+</body>
+</html>

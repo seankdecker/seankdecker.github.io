@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<!--
+Bandits Algorithms - Tor Lattimore and Csaba Szepesvari
+  https://banditalgs.com/2016/09/04/bandits-a-new-beginning/
+
+-->
+<html lang="en-US">
+<head>
+  <title>Bandits</title>
+  <meta name="author" content="Sean" />
+  <link rel="stylesheet" type="text/css" href="../../../css/sides.css" />
+  <style>body {background-color:black;}</style>
+  <!-- Adding Popup Explanation-->
+  <script id='js' type='text/javascript' src='../../../js/add_popup.js'></script>
+  <script>
+    addPopup([
+      'Recursively build the penrose tiling, click by click!'
+    ]);
+  </script>
+  <link rel="stylesheet" type="text/css" href="../../../css/popup.css" />
+</head>
+<body>
+  <p></p>
+  <sidenav id='sidenav'>
+  </sidenav>
+  <canvas class="row_canvas" id="canvas"  width='3000' height='3000' margin='10px'
+          style='height:750px;width:750px;'></canvas>
+  <script type="text/javascript" src="../../../js/drawing_lib.js"></script>
+  <script type="text/javascript">
+    // Setup Canvas
+    const canvas = new Canvas('canvas');
+    let len = 1500;
+    let golden = (1 + Math.sqrt(5)) / 2;
+
+    let red = "hsl(223, 100%, 82%)";
+    let blue = "hsl(180, 100%, 82%)";
+
+    class Square {
+      constructor(points, color) {
+        this.points = points;
+        this.red = color;
+      }
+
+      draw() {
+        if (this.red) {
+          canvas.drawPoly(this.points, red);
+        } else {
+          canvas.drawPoly(this.points, blue);
+        }
+      }
+
+      update(newShapes) {
+        let [A, B, C, D] = this.points;
+        if (this.red) {
+          let AB = [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2];
+          let BC = [(B[0] + C[0]) / 2, (B[1] + C[1]) / 2];
+          let CD = [(C[0] + D[0]) / 2, (C[1] + D[1]) / 2];
+          let DA = [(D[0] + A[0]) / 2, (D[1] + A[1]) / 2];
+          let midpoint = [(AB[0] + CD[0]) / 2, (AB[1] + CD[1]) / 2];
+          newShapes.push(new Square([A, AB, midpoint, DA], true));
+          newShapes.push(new Square([B, BC, midpoint, AB], false));
+          newShapes.push(new Square([C, CD, midpoint, BC], true));
+          newShapes.push(new Square([D, DA, midpoint, CD], false));
+        } else {
+          let AB = [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2];
+          let BC = [(B[0] + C[0]) / 2, (B[1] + C[1]) / 2];
+          let CD = [(C[0] + D[0]) / 2, (C[1] + D[1]) / 2];
+          let DA = [(D[0] + A[0]) / 2, (D[1] + A[1]) / 2];
+          let midpoint = [(AB[0] + CD[0]) / 2, (AB[1] + CD[1]) / 2];
+          newShapes.push(new Square([A, AB, midpoint, DA], false));
+          newShapes.push(new Square([B, BC, midpoint, AB], true));
+          newShapes.push(new Square([C, CD, midpoint, BC], false));
+          newShapes.push(new Square([D, DA, midpoint, CD], true));
+        }
+      }
+    }
+
+
+    class Tile {
+      constructor(points, color) {
+        this.points = points;
+        this.red = color;
+      }
+
+      draw() {
+        if (this.red) {
+          canvas.drawPoly(this.points, red);
+        } else {
+          canvas.drawPoly(this.points, blue);
+        }
+      }
+
+      update(newShapes) {
+        let [A, B, C] = this.points;
+        if (this.red) {
+          let P = [A[0] + (B[0] - A[0]) / golden, A[1] + (B[1] - A[1]) / golden];
+          newShapes.push(new Tile([C, P, B], true));
+          newShapes.push(new Tile([P, C, A], false));
+        } else {
+          let Q = [B[0] + (A[0] - B[0]) / golden, B[1] + (A[1] - B[1]) / golden];
+          let R = [B[0] + (C[0] - B[0]) / golden, B[1] + (C[1] - B[1]) / golden];
+          newShapes.push(new Tile([R, C, A], false));
+          newShapes.push(new Tile([Q, R, B], false));
+          newShapes.push(new Tile([R, Q, A], true));
+        }
+      }
+    }
+
+    class Tiling {
+      constructor(type) {
+        let mid = [canvas.width/2, canvas.height/2];
+        this.shapes = [];
+        if (type=="penrose") {
+          for (let i = 0; i < 10; i++) {
+            let angle1 = 2*Math.PI/10*i, angle2 = 2*Math.PI/10*(i+1);
+            if (i % 2 == 0) {
+              var shape = new Tile([
+                mid,
+                [mid[0] + Math.cos(angle2) * len, mid[1] - Math.sin(angle2) * len],
+                [mid[0] + Math.cos(angle1) * len, mid[1] - Math.sin(angle1) * len]
+              ], true);
+            } else {
+              var shape = new Tile([
+                mid,
+                [mid[0] + Math.cos(angle1) * len, mid[1] - Math.sin(angle1) * len],
+                [mid[0] + Math.cos(angle2) * len, mid[1] - Math.sin(angle2) * len]
+              ], true);
+            }
+            this.shapes.push(shape);
+          }
+        } else if (type=="square") {
+          for (let i = 0; i < 4; i++) {
+            let angle1 = 2*Math.PI/4*i;
+            let angle2 = 2*Math.PI/4*(i+1);
+            if (i % 2 == 0) {
+              var shape = new Square([
+                mid,
+                [mid[0] + Math.cos(angle1) * len, mid[1]],
+                [mid[0] + Math.cos(angle1) * len, mid[1] - Math.sin(angle2) * len],
+                [mid[0], mid[1] - Math.sin(angle2) * len]
+              ], false);
+            } else {
+              var shape = new Square([
+                mid,
+                [mid[0], mid[1] - Math.sin(angle1) * len],
+                [mid[0] + Math.cos(angle2) * len, mid[1] - Math.sin(angle1) * len],
+                [mid[0] + Math.cos(angle2) * len, mid[1]]
+              ], true);
+            }
+            this.shapes.push(shape);
+          }
+        }
+        this.draw();
+      }
+
+      update() {
+        let newShapes = [];
+        for (let i = 0; i < this.shapes.length; i++) { this.shapes[i].update(newShapes); }
+        this.shapes = newShapes;
+        canvas.clear();
+        this.draw();
+      }
+
+      draw() {
+        for (let i = 0; i < this.shapes.length; i++) { this.shapes[i].draw(); }
+        console.log(this.shapes);
+      }
+    }
+
+    let tiling = new Tiling("penrose");
+
+    const side = document.getElementById('sidenav');
+    canvas.c.addEventListener("click", () => {tiling.update();});
+  </script>
+</body>
+</html>

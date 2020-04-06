@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<!--
+Resources:
+3Blue1Brown - Fractal charm: Space filling curves
+  https://www.youtube.com/watch?v=RU0wScIj36o
+1Blue1Brown - Hilbert's Curve: Is infinite math useful?
+  https://www.youtube.com/watch?v=3s7h2MHQtxc
+Numberphile - Space-Filling Curves
+  https://www.youtube.com/watch?v=x-DgL49CFlM
+Wikipedia - L-system
+  https://en.wikipedia.org/wiki/L-system
+Wolfram Math World - Hilbert Curve
+  http://mathworld.wolfram.com/HilbertCurve.html
+Wolfram Math World - Dragon Curve
+  http://mathworld.wolfram.com/DragonCurve.html
+Paul Bourke -
+  http://paulbourke.net/fractals/lsys/
+-->
+<html lang="en-US">
+<head>
+  <title>L-system</title>
+  <meta name="author" content="Sean" />
+  <link rel="stylesheet" type="text/css" href="../../../css/sides.css" />
+  <style>
+    p {
+      color: white;
+    }
+    body { background-color: black }
+    canvas {background-color: black }
+  </style>
+  <!-- Adding Popup Explanation-->
+  <script id='js' type='text/javascript' src='../../../js/add_popup.js'></script>
+  <script>
+    addPopup([
+      'This is my exploration of L-systems to make pretty fractals!',
+      "Each option on the left is an l-system, we start with an axiom string \
+      and then on each iteration, we expand the string using the system's \
+      production rules. This string can then be interrepted as drawing \
+      instructions, which is what is drawn.",
+      'I think the fractals that are made are quite pretty!'
+    ]);
+  </script>
+  <link rel="stylesheet" type="text/css" href="../../../css/popup.css" />
+</head>
+<body>
+  <div id='sidenav'>
+  </div>
+
+  <canvas class="row_canvas" id="canvas"  width='750' height='750' margin='10px'></canvas>
+  <script type="text/javascript" src="../../../js/drawing_lib.js"></script>
+  <script type="text/javascript">
+    // Setup Canvas
+    const canvas = new Canvas('canvas');
+    var DIM = 0;
+  </script>
+  <!-- add sidenav elements from fractals.js -->
+  <script type="text/javascript" src="js/fractals.js"></script>
+  <script type="text/javascript" src="js/l-system_rules.js"></script>
+  <script type="text/javascript">
+    // main
+    var currFractal = fractals['Hilbert'];
+    var string = currFractal.axiom, draw_state = null, color = true;
+    create();
+    // add buttons to sidenav
+    (function buildButtons() {
+      Object.keys(fractals).forEach((key) => {
+        let button = document.createElement("button");
+        button.setAttribute("type", "button");
+        button.setAttribute("onclick", "changeSystem('" + key + "');");
+        button.appendChild(document.createTextNode(fractals[key].name));
+        document.getElementById("sidenav").appendChild(button);
+      });
+    })();
+
+    // clear canvas and change fractal
+    function changeSystem(system) {
+      canvas.clear();
+      DIM = 0;
+      currFractal = fractals[system];
+      string = currFractal.axiom;
+      create();
+    }
+
+    // draw the current fractal
+    function create() {
+      draw_state = { x: currFractal.x_pos, y: currFractal.y_pos,
+                     theta: currFractal.theta(), angle: currFractal.angle };
+      draw_state.len = currFractal.len(string, draw_state);
+      console.log('curr fractal: ', string);
+      drawString(string, draw_state);
+    }
+
+    // replace string using mapObj
+    function replaceAll(str, mapObj) {
+      var re = new RegExp(Object.keys(mapObj).join('|'), 'gi');
+      return str.replace(re, function(matched) { return mapObj[matched]; });
+    }
+
+    // set draw_state variables
+    function autoSetDrawingVars(string) {
+      function moveAndMeasure(test_state) {
+        test_state.x += Math.cos(test_state.theta);
+        test_state.y -= Math.sin(test_state.theta);
+        if (test_state.x < test_state.minX) { test_state.minX = test_state.x; }
+        if (test_state.x > test_state.maxX) { test_state.maxX = test_state.x; }
+        if (test_state.y < test_state.minY) { test_state.minY = test_state.y; }
+        if (test_state.y > test_state.maxY) { test_state.maxY = test_state.y; }
+      }
+      test_state = { ...draw_state, x: 0, y: 0, saved_points: [],
+                                    minX: 0, maxX: 0, minY: 0, maxY: 0}
+      for (let i = 0; i < string.length; i++) {
+        drawing_rules[string[i]](test_state, moveAndMeasure);
+      }
+      draw_state.len = canvas.width / Math.max(test_state.maxX - test_state.minX,
+                                               test_state.maxY - test_state.minY);
+      draw_state.x = -test_state.minX * draw_state.len;
+      draw_state.y = canvas.height - test_state.maxY * draw_state.len;
+      return draw_state.len;
+    }
+
+    // draw forward
+    function moveForward(drawing) {
+      canvas.ctx.moveTo(drawing.x, drawing.y);
+      drawing.x += Math.cos(drawing.theta) * drawing.len;
+      drawing.y -= Math.sin(drawing.theta) * drawing.len;
+      canvas.ctx.lineTo(drawing.x, drawing.y);
+    }
+
+    // draw __without__ color
+    function colorlessDraw(string, drawing) {
+      canvas.ctx.moveTo(drawing.x, drawing.y);
+      for (let i = 0; i < string.length; i++) {
+        drawing_rules[string[i]](drawing, moveForward);
+      }
+      canvas.ctx.stroke(); // stroke at end makes it more efficient
+    }
+
+    // draw __with__ color
+    function colorDraw(string, drawing) {
+      canvas.ctx.moveTo(drawing.x, drawing.y);
+      for (let i = 0; i < string.length; i++) {
+        canvas.ctx.beginPath();
+        var color = i / string.length * 360;
+        canvas.ctx.strokeStyle = "hsl(" + color + ", 100%, 50%)";
+        drawing_rules[string[i]](drawing, moveForward);
+        canvas.ctx.stroke();
+      }
+      // stroke at end makes it more efficient
+    }
+
+    // draw string defined by string
+    function drawString(string) {
+      drawing = { ...draw_state, saved_points: [], canavs: canvas };
+      if (color) {colorDraw(string, drawing)}
+      else {colorlessDraw(string, drawing)}
+      canvas.ctx.closePath();
+    }
+
+    // increment the dimension of fractal and create
+    function nextDim() {
+      canvas.clear();
+      DIM++;
+      string = replaceAll(string, currFractal.rules);
+      create();
+    }
+
+    addClick();
+    const side = document.getElementById('sidenav');
+    side.addEventListener("mouseover", removeClick);
+    side.addEventListener("mouseout", addClick);
+    function addClick() { canvas.c.addEventListener("click", nextDim); }
+    function removeClick() { canvas.c.removeEventListener("click", nextDim); }
+  </script>
+</body>
+</html>

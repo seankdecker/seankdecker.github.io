@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<!-- Also called Ulam Spiral
+Prime Spirals - Numberphile
+  https://www.youtube.com/watch?v=iFuR97YcSLM
+-->
+<html lang="en-US">
+<head>
+  <title>Prime Sprial</title>
+  <meta name="author" content="Sean" />
+  <link rel="stylesheet" type="text/css" href="../../../css/sides.css" />
+  <style>
+    #centered {
+      width: 500px;
+      height: 500px;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+  <!-- Adding Popup Explanation-->
+  <script id='js' type='text/javascript' src='../../../js/add_popup.js'></script>
+  <script>
+    addPopup([
+      'This page generate a prime spiral!',
+      'This was my first page, so go easy on it.',
+      'The smaller the spacing enters, the more fine grained the sprial',
+      'TODO: let spiral by Circle or Hexagon as well'
+    ]);
+  </script>
+  <link rel="stylesheet" type="text/css" href="../../../css/popup.css" />
+</head>
+<body>
+  <p>Input a width for the Squares: <p>
+  <input type="text" id="input_spacing" value="3">
+  <button onclick="main()">Submit</button>
+  <div id="centered">
+    <canvas id="canvas"  width='500' height='500'></canvas>
+  </div>
+  <script type="text/javascript">
+    const c = document.getElementById('canvas');
+    const CTX = c.getContext('2d');
+    var SIZE_LEN = 3;
+    main();
+
+    /**
+    Returns a list of primes up to the limit n
+    runs in O(n)
+    */
+    function seive_of_euler(n) {
+      if (n < 2){ return []; }
+      let numbers = [];
+      for (i = 2; i <= n; i++) { numbers.push(i); }
+      // remove nonprimes
+      for (let p = 0; Math.pow(p, 2) <= n; p++) {
+        let toRemove = [];
+        for (let i = p; numbers[p] * numbers[i] <= n; i ++) {
+          toRemove.push(numbers[p]*numbers[i]);
+        }
+        for (j = 0; j < toRemove.length; j++) {
+          let index = numbers.indexOf(toRemove[j]);
+          numbers.splice(index, 1);
+        }
+      }
+      return numbers;
+    }
+
+    /**
+    Starting in the center of the canvas, and circling
+    around in a square shape, printing out squares for the primes
+    */
+    function draw_primes(primes, limit) {
+      let x = canvas.width/2, y = canvas.height/2;
+      let count = 0, first = true;
+      let directions = ['right', 'up', 'left', 'down'];
+      let curr_length = 1, curr_direction = 0;
+      for (let i = 1; i < limit; i++) {
+        if (primes.includes(i)) { CTX.fillRect(x, y, SIZE_LEN, SIZE_LEN); }
+        // change the point we are looking at based on
+        // our current direction
+        if (directions[curr_direction] == 'right') { x += SIZE_LEN; }
+        else if (directions[curr_direction] == 'up') { y -= SIZE_LEN; }
+        else if (directions[curr_direction] == 'left') { x -= SIZE_LEN; }
+        else if (directions[curr_direction] == 'down') { y += SIZE_LEN; }
+        count++;
+        // change directions if we have passed the current length
+        if (count === curr_length) {
+          curr_direction = (curr_direction + 1) % 4;
+          count = 0;
+          if (first) { first = false; }
+          else { first = true; curr_length++; }
+        }
+      }
+    }
+
+    // main function
+    function main() {
+      possible_size = parseInt(document.getElementById("input_spacing").value);
+      SIZE_LEN = (possible_size > 0 && possible_size < 20? possible_size : 3)
+      CTX.clearRect(0, 0, canvas.width, canvas.height);
+      let limit = (canvas.width/SIZE_LEN) * (canvas.width/SIZE_LEN);
+      const primes = seive_of_euler(limit);
+      console.log('Primes: ');
+      console.log(primes);
+      draw_primes(primes, limit);
+    }
+  </script>
+</body>
+</html>

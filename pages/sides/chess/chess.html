@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<!--
+Resources:
+  A step-by-step guide to building a simple chess AI - Lauri Hartikka
+    https://www.freecodecamp.org/news/simple-chess-ai-step-by-step-1d55a9266977/
+  Monte Carlo instead of Alpha-Beta? - Stephan Oliver Platz
+    https://en.chessbase.com/post/monte-carlo-instead-of-alpha-beta
+  Stockfish engine in JS
+    https://github.com/nmrugg/stockfish.js/
+-->
+<html lang="en-US">
+<head>
+  <title>Chess</title>
+  <meta name="author" content="Sean" />
+  <link rel="stylesheet" type="text/css" href="./chess.css" />
+  <link rel="stylesheet" type="text/css" href="../../../css/sides.css" />
+  <!-- Adding Popup Explanation-->
+  <script id='js' type='text/javascript' src='../../../js/add_popup.js'></script>
+  <script>
+    addPopup([
+      'Try your best to beat my minimax chess engine! Select a minimax depth \
+      to match the level of "AI" you would like to face'
+    ]);
+  </script>
+  <link rel="stylesheet" type="text/css" href="../../../css/popup.css" />
+  <!-- JQuery.js -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <!-- Get chessboard.js and .css -->
+  <link rel="stylesheet"
+        href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
+        integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU"
+        crossorigin="anonymous" />
+  <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"
+        integrity="sha384-8Vi8VHwn3vjQ9eUHUxex3JSN/NFqUg3QbPyX8kWyb93+8AC/pPWTzj+nHtbC5bxD"
+        crossorigin="anonymous"></script>
+  <!-- Used to get images -->
+  <base href="http://chessboardjs.com/" />
+  <!-- chess.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.2/chess.js"></script>
+</head>
+<body>
+  <div id="board-container">
+    <div id="sidenav"></div>
+    <div id="board"></div>
+    <div id="info">
+      <select id="search-depth">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3" selected>3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+      <br />
+      <span>Positions evaluated: <span id="position-count"></span></span>
+      <br />
+      <span>Time: <span id="time"></span></span>
+      <br />
+      <span>Positions/s: <span id="positions-per-s"></span> </span>
+      <br />
+      <br />
+      <span>Move History</span>
+      <div id="move-history" class="move-history" />
+    </div>
+  <div>
+  <script type="text/javascript">
+    var board,
+    game = new Chess();
+
+    /********** AI **************/
+    // Get value of given peice
+    // White peices are positve valued, Black negative
+    function getPieceValue(piece) {
+        if (piece === null) { return 0; }
+        function getPeiceValue (piece) {
+            if      (piece.type === 'p') { return 1; }
+            else if (piece.type === 'n') { return 3; }
+            else if (piece.type === 'b') { return 3; }
+            else if (piece.type === 'r') { return 5; }
+            else if (piece.type === 'q') { return 9; }
+            else if (piece.type === 'k') { return 900;}
+            throw "Unknown piece type: " + piece.type;
+        }
+        let absoluteValue = getPeiceValue(piece);
+        return piece.color === 'w' ? absoluteValue : -absoluteValue;
+    }
+
+    // Return board evaluation
+    // White prefernce is positive, Black negative
+    function evaluateBoard(game) {
+      var totalEvaluation = 0;
+      for (let c = 'a'; c != 'i'; c = String.fromCharCode(c.charCodeAt(0) + 1)) {
+        for (var i = 1; i < 9; i++) {
+          totalEvaluation += getPieceValue(game.get(c + i));
+        }
+      }
+      return totalEvaluation;
+    }
+
+    function minimax(depth, game, isMaximisingPlayer) {
+      positionCount++;
+      if (depth === 0) { return [null, -evaluateBoard(game)]; }
+      var gameMoves = game.moves();
+      if (isMaximisingPlayer) {
+        var bestMove = null, bestMoveVal = -Infinity;
+        for (const tempMove of gameMoves) {
+          game.move(tempMove);
+          let [mov, val] = minimax(depth - 1, game, !isMaximisingPlayer);
+          if (bestMoveVal < val) { [bestMove, bestMoveVal] = [tempMove, val]; }
+          game.undo();
+        }
+        return [bestMove, bestMoveVal];
+      } else {
+        var bestMove = null, bestMoveVal = Infinity;
+        for (const tempMove of gameMoves) {
+          game.move(tempMove);
+          let [mov, val] = minimax(depth - 1, game, !isMaximisingPlayer);
+          if (bestMoveVal > val) { [bestMove, bestMoveVal] = [tempMove, val]; }
+          game.undo();
+        }
+        return [bestMove, bestMoveVal];
+      }
+    }
+
+    function alphaBetaMiniMax(depth, game, isMaximisingPlayer, alpha, beta) {
+      positionCount++;
+      if (depth === 0) { return [null, -evaluateBoard(game)]; }
+      var gameMoves = game.moves();
+      if (isMaximisingPlayer) {
+        var bestMove = null, bestMoveVal = -9999;
+        for (const tempMove of gameMoves) {
+          game.move(tempMove);
+          let [mov, val] = alphaBetaMiniMax(depth - 1, game, !isMaximisingPlayer, alpha, beta);
+          game.undo();
+          if (bestMoveVal < val) { [bestMove, bestMoveVal] = [tempMove, val]; }
+          if (alpha < bestMoveVal) { alpha = bestMoveVal; }
+          if (beta <= alpha) break;
+
+        }
+        return [bestMove, bestMoveVal];
+      } else {
+        var bestMove = null, bestMoveVal = 9999;
+        for (const tempMove of gameMoves) {
+          game.move(tempMove);
+          let [mov, val] = alphaBetaMiniMax(depth - 1, game, !isMaximisingPlayer, alpha, beta);
+          game.undo();
+          if (bestMoveVal > val) { [bestMove, bestMoveVal] = [tempMove, val]; }
+          if (beta > bestMoveVal) { beta = bestMoveVal; }
+          if (beta <= alpha) break;
+        }
+        return [bestMove, bestMoveVal];
+      }
+    }
+
+    // set up algorithm and retreive game move
+    function getAIMove(game) {
+      var depth = parseInt($('#search-depth').find(':selected').text());
+      return alphaBetaMiniMax(depth, game, true, -Infinity, Infinity)[0];
+    }
+
+    /********** Board Setup and User Input **************/
+    function onDragStart(source, piece, position, orientation) {
+      if (game.in_checkmate() === true || game.in_draw() === true ||
+        piece.search(/^b/) !== -1) {
+        return false;
+      }
+    }
+
+    function makeBestMove() {
+      var bestMove = getBestMove(game);
+      game.move(bestMove);
+      board.position(game.fen());
+      renderMoveHistory(game.history());
+      if (game.game_over()) {
+        alert('Game over');
+      }
+    }
+
+    var positionCount;
+    function getBestMove(game) {
+      if (game.game_over()) { alert('Game over'); }
+      positionCount = 0;
+
+      var t_0 = new Date().getTime();
+      var bestMove = getAIMove(game);
+      var t_1 = new Date().getTime();
+      var positionsPerS = ( positionCount * 1000 / (t_1 - t_0));
+
+      $('#position-count').text(positionCount);
+      $('#time').text((t_1 - t_0)/1000 + ' sec');
+      $('#positions-per-s').text(positionsPerS);
+      return bestMove;
+    }
+
+    var renderMoveHistory = function (moves) {
+      var historyElement = $('#move-history').empty();
+      historyElement.empty();
+      for (var i = 0; i < moves.length; i = i + 2) {
+        historyElement.append('<span>' + moves[i] + ' ' + ( moves[i + 1] ? moves[i + 1] : ' ') + '</span><br>')
+      }
+      historyElement.scrollTop(historyElement[0].scrollHeight);
+    };
+    var onDrop = function (source, target) {
+      var move = game.move({
+        from: source,
+        to: target,
+        promotion: 'q'
+      });
+      if (move === null) {
+        // return peice
+        return 'snapback';
+      }
+      renderMoveHistory(game.history());
+      window.setTimeout(makeBestMove, 250);
+    };
+    var onSnapEnd = () => { board.position(game.fen()); };
+    var cfg = {
+      draggable: true,
+      position: 'start',
+      onDragStart: onDragStart,
+      onDrop: onDrop,
+      onSnapEnd: onSnapEnd
+    };
+    board = ChessBoard('board', cfg);
+  </script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.first {
+  text-align: center;
+  overflow: hidden;
+  background-color: lightblue;
+  padding: 1px;
+}
+
+/* Style the content */
+.second {
+    background-color: tomato;
+    padding: 1px;
+    height: 200px; /* Should be removed. Only for demonstration */
+}
+
+/* .second {
+  text-align: left;
+  background-color: tomato;
+  height: 200px;
+} */
+
+.third {
+  padding: 1px;
+  background-color: yellow;
+}

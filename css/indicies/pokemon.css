@@ -1,0 +1,266 @@
+body {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  background-image: url('../../pictures/pokemon/fire-red-safari.png');
+  background-repeat: no-repeat;
+   background-size: cover;
+}
+
+.title {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 200px;
+  width: 200px;
+  text-align: center;
+  color: rgba(255,255,255,0);
+  background-image: url("../../pictures/pokemon/pokeballs/closed_pokeball.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  animation: open 2s forwards 1;
+  animation-play-state: paused;
+}
+
+.title:hover {
+  cursor: pointer;
+  animation-play-state: running;
+}
+
+.title h1{
+  /* load animation */
+  background-image: url("../../pictures/pokemon/pokeballs/closed_pokeball.png");
+  animation: load 3s forwards 1;
+  animation-play-state: running;
+  margin: 0;
+  padding-top: 120px;
+}
+
+@keyframes open {
+  20%   { background-image: url("../../pictures/pokemon/pokeballs/semi_open_pokeball.png"); color: rgba(255,255,255,0.5);}
+  50%  { background-image: url("../../pictures/pokemon/pokeballs/open_pokeball.png"); color: rgba(255,255,255,1);}
+  100%  { background-image: url("../../pictures/pokemon/pokeballs/open_pokeball.png"); color: rgba(255,255,255,1);}
+}
+
+@keyframes load {
+  0%   { background-image: url("../../pictures/pokemon/pokeballs/closed_pokeball.png"); opacity: 0;}
+  10%  { background-image: url("../../pictures/pokemon/pokeballs/semi_open_pokeball.png"); opacity: 0;}
+  20%  { background-image: url("../../pictures/pokemon/pokeballs/open_pokeball.png"); opacity: 0;}
+  50%  { background-image: none; opacity: 0;}
+  100% { background-image: none; opacity: 1;}
+}
+
+/* Style the side navigation */
+.sidenav {
+  /* position: absolute;
+  top: 100px;
+  left: 0;
+  height: 200px;
+  width: 100%;
+  z-index: 1;
+  overflow-x: hidden; */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+a:link, a:visited {
+  text-decoration: none;
+}
+
+/* Side navigation links */
+.sidenav .page {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  padding: 8px;
+  color: rgba(0,0,0,0);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  animation-play-state: running;
+}
+
+.sidenav .page:hover {
+
+}
+
+@keyframes pace {
+  0% { top: 4%; left: 6%; }
+  50%   { top: 35%; left: 60%; transform: rotate(30deg);}
+  100% { top: 4%; left: 6%;}
+}
+
+@keyframes pace2 {
+  0% { bottom: 6%; left: 67%; }
+  25%   { transform: rotate(60deg);}
+  50%   { bottom: 75%; left: 60%; transform: rotate(30deg);}
+  75%   { transform: rotate(-10deg);}
+  100% { bottom: 6%; left: 67%;}
+}
+
+@keyframes pace3 {
+  0% { bottom: 16%; right: 87%; }
+  25%   { transform: rotate(-70deg);}
+  50%   { bottom: 92%; right: 20%; transform: rotate(-100deg);}
+  75%   { transform: rotate(-60deg);}
+  100% { bottom: 16%; right: 87%;}
+}
+
+@keyframes pace4 {
+  0% { bottom: 24%; right: 47%; }
+  25%   { bottom: 37%; right: 17%; transform: rotate(-70deg);}
+  50%   { bottom: 58%; right: 20%; transform: rotate(-100deg);}
+  75%   { bottom: 16%; right: 87%; transform: rotate(-60deg);}
+  100% { bottom: 24%; right: 47%;}
+}
+
+@keyframes circle {
+  0% { top: 10px; left: 6px; transform: rotate(0deg); }
+  10%   { transform: translate(40px, 100px) rotate(10deg); }
+  20%   { transform: translate(70px, 200px) rotate(15deg); }
+  30%   { transform: translate(140px, 370px) rotate(3deg); }
+  40%   { transform: translate(200px, 400px) rotate(-10deg); }
+  50%   { transform: translate(340px, 490px) rotate(-15deg); }
+  60%   { transform: translate(260px, 360px) rotate(-5deg); }
+  70%   { transform: translate(280px, 240px) rotate(3deg); }
+  80%   { transform: translate(140px, 270px) rotate(7deg); }
+  90%   { transform: translate(70px, 130px) rotate(-1deg); }
+  100% { top: 10px; left: 6px; transform: rotate(0deg);}
+}
+
+@keyframes speeder {
+  0% { top: 100px; left: 10px; transform: rotate(0deg); }
+  10%   { transform: translate(10px, -90px) rotate(10deg);}
+  20%   { transform: translate(250px, 30px) rotate(20deg); }
+  30%   { transform: translate(507px, 140px) rotate(30deg);}
+  40%   { transform: translate(704px, 460px) rotate(0deg);}
+  50%   { transform: translate(904px, 603px) rotate(10deg);}
+  60%   { transform: translate(480px, 802px) rotate(14deg);}
+  70%   { transform: translate(380px, 780px) rotate(8deg);}
+  80%   { transform: translate(173px, 378px) rotate(-2deg);}
+  90%   { transform: translate(105px, 230px) rotate(-12deg); }
+  100% { top: 100px; left: 10px; transform: rotate(0deg);}
+}
+
+@keyframes circle3 {
+  0% { top: 430px; left: 10px; transform: rotate(0deg); }
+  10%   { transform: translate(10px, -80px) rotate(-10deg); }
+  20%   { transform: translate(250px, -140px) rotate(-13deg); }
+  30%   { transform: translate(507px, -360px) rotate(-3deg); }
+  40%   { transform: translate(704px, -460px) rotate(4deg); }
+  50%   { transform: translate(904px, -300px) rotate(12deg); }
+  60%   { transform: translate(480px, -102px) rotate(3deg); }
+  70%   { transform: translate(380px, 100px) rotate(-5deg); }
+  80%   { transform: translate(173px, 305px) rotate(-16deg); }
+  90%   { transform: translate(105px, 150px) rotate(-7deg); }
+  100% { top: 430px; left: 10px; transform: rotate(0deg);}
+}
+
+@keyframes shy {
+  0% { bottom: 22px; right: 10px; transform: rotate(0deg); }
+  10%   { transform: translate(-5px, -7px) rotate(10deg); }
+  20%   { transform: translate(-14px, -14px) rotate(13deg); }
+  30%   { transform: translate(-18px, -10px) rotate(3deg); }
+  40%   { transform: translate(-24px, -5px) rotate(-4deg); }
+  50%   { transform: translate(-25px, -8px) rotate(-2deg); }
+  60%   { transform: translate(-15px, -10px) rotate(5deg); }
+  70%   { transform: translate(-13px, -12px) rotate(-5deg); }
+  80%   { transform: translate(-6px, -8px) rotate(-7deg); }
+  90%   { transform: translate(2px, -4px) rotate(-4deg); }
+  100% { bottom: 22px; right: 10px; transform: rotate(0deg);}
+}
+
+@keyframes spin {
+  0% { bottom: 60%; right: 30%; transform: rotate(0deg); }
+  10%   { transform: translate(-5px, -7px)  rotate(36deg);}
+  20%   { transform: translate(-14px, -14px) rotate(72deg);}
+  30%   { transform: translate(-18px, -10px) rotate(108deg);}
+  40%   { transform: translate(-24px, -5px) rotate(144deg);}
+  50%   { transform: translate(-25px, -8px)rotate(180deg);}
+  60%   { transform: translate(-15px, -10px) rotate(216deg);}
+  70%   { transform: translate(-13px, -12px) rotate(252deg);}
+  80%   { transform: translate(-6px, -8px) rotate(288deg);}
+  90%   { transform: translate(2px, -4px) rotate(324deg);}
+  100% { bottom: 60%; right: 30%; transform: rotate(360deg);}
+}
+
+@keyframes shy2 {
+  0% { top: 75%; right: 10px; transform: rotate(0deg); }
+  10%   { transform: translate(-5px, -7px) rotate(-10deg); }
+  20%   { transform: translate(-14px, -14px) rotate(-13deg); }
+  30%   { transform: translate(-17px, -10px) rotate(-3deg); }
+  40%   { transform: translate(-20px, -5px) rotate(4deg); }
+  50%   { transform: translate(-14px, -8px) rotate(12deg); }
+  60%   { transform: translate(-9px, -10px) rotate(3deg); }
+  70%   { transform: translate(-4px, -12px) rotate(-5deg); }
+  80%   { transform: translate(-3px, -8px) rotate(-16deg); }
+  90%   { transform: translate(2px, -4px) rotate(-7deg); }
+  100% { top: 75%; right: 10px; transform: rotate(0deg);}
+}
+
+@keyframes bottom {
+  0% { bottom: 52px; left: 10px; transform: rotate(0deg); }
+  10%   { transform: translate(5px, -7px) rotate(-10deg); }
+  22%   { bottom: 16px; left: 50%; transform: rotate(9deg); }
+  40%   { transform: translate(135px, -5px) rotate(14deg); }
+  50%   { bottom: 5px; right: 10px; transform: rotate(5deg); }
+  60%   { transform: translate(-9px, -10px) rotate(-9deg); }
+  75%   { bottom: 40px; right: 50%; transform: rotate(-15deg); }
+  90%   { transform: translate(2px, -4px) rotate(-7deg); }
+  100% { bottom: 52px; left: 10px; transform: rotate(0deg);}
+}
+
+@keyframes left {
+  0% { bottom: 5%; left: 16px; transform: rotate(0deg); }
+  10%   { transform: rotate(-10deg); }
+  22%   { bottom: 50%; left: 170px; transform: rotate(9deg); }
+  40%   { transform: rotate(14deg); }
+  50%   { bottom: 89%; left: 270px; transform: rotate(5deg); }
+  60%   { transform: rotate(-9deg); }
+  75%   { bottom: 40%; left: 105px; transform: rotate(-15deg); }
+  90%   { transform: rotate(-7deg); }
+  100% { bottom: 5%; left: 16px; transform: rotate(0deg);}
+}
+
+/* Side navigation links */
+.sidenav #clock {
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* background-color: white; */
+  width: 300px;
+  height: 300px;
+  display: block;
+  transition: background-color 0.2s;
+}
+
+
+
+/* Change color on hover */
+/* .sidenav .page:hover {
+  background-color: #ddd;
+  color: black;
+}
+*/
+
+
+
+/* .title h1:hover {
+  background-color: #ddd;
+  color: black;
+} */
+
+/* Style the content */
+.content {
+  position: absolute;
+  background-image: url('../../pictures/pokemon/Pokemon-retro.jpg');
+  background-size: cover;
+  opacity:0.7;
+  /* z-index: 99; */
+  color: black;
+  bottom: 0;
+  left: 0;
+}

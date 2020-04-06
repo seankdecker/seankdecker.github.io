@@ -1,0 +1,119 @@
+/* Everything */
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  /* background-image: linear-gradient(to right, rgba(255,0,0,0.5), rgba(255,165,0,0.4),
+                                    rgba(255,255,0,0.5), rgba(0,255,0,0.5),
+                                    rgba(0,0,255,0.5),
+                                    rgba(75,0,130,0.4), rgba(84,22,180,0.5)); */
+  background-image: linear-gradient(to right, rgba(255,0,0,0.5), rgba(255,165,0,0.4),
+                                    rgba(255,255,0,0.5), rgba(0,255,0,0.5),
+                                    rgba(0,0,255,0.5),
+                                    rgba(75,0,130,0.4), rgba(84,22,180,0.5));`
+}
+
+.sidenav {
+  display: flex;
+  flex-direction: row;
+  margin: 10px;
+  flex-wrap: wrap-reverse;
+  justify-content: space-around;
+}
+
+.page {
+  color: white;
+  padding: 16px;
+  text-align: center;
+  border-radius: 25px;
+  text-decoration: none;
+  display: block;
+}
+
+.page:hover {
+  background-color: rgba(255,255,255,0.5);
+  box-shadow: 0px 0px 50px 40px rgba(255,255,255,0.5);
+}
+
+.page:hover a {
+  animation-iteration-count: 0;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.page:hover {
+  background-color: rgba(255,255,255,0.5);
+  box-shadow: 0px 0px 50px 40px rgba(255,255,255,0.5);
+}
+
+.page:hover a {
+  animation-iteration-count: 0;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+a:link, a:visited {
+  text-decoration: none;
+}
+
+.page a {
+  animation: text_rainbowing 15s infinite;
+}
+
+@keyframes text_rainbowing {
+  0%   {color: rgba(255,0,0,0.4);}
+  16.66%  {color: rgba(255,165,0,0.4);}
+  33.33%  {color: rgba(255,255,0,0.4);}
+  50% {color: rgba(0,255,0,0.4);}
+  66.66%  {color: rgba(0,0,255,0.4);}
+  73.33%  {color: rgba(75,0,130,0.4);}
+  86.66% {color: rgba(84,22,180,0.4);}
+  100% {color: rgba(255,0,0,0.4);}
+}
+
+.title {
+  width: 100%;
+  margin: 9px, 0px, 0px,9px;
+  animation: rainbowing 15s infinite;
+}
+
+@keyframes rainbowing {
+  0%   {background-color: rgba(255,0,0,0.4);
+    box-shadow: 0px 5px 8px rgba(255,0,0,0.4), 0px -5px 8px rgba(255,0,0,0.4);}
+  16.66%  {background-color: rgba(255,165,0,0.4);
+    box-shadow: 0px 5px 8px rgba(255,165,0,0.4), 0px -5px 8px rgba(255,165,0,0.4);}
+  33.33%  {background-color: rgba(255,255,0,0.4);
+    box-shadow: 0px 5px 8px rgba(255,255,0,0.4), 0px -5px 8px rgba(255,255,0,0.4);}
+  50% {background-color: rgba(0,255,0,0.4);
+    box-shadow: 0px 5px 8px rgba(0,255,0,0.4), 0px -5px 8px rgba(0,255,0,0.4);}
+  66.66%  {background-color: rgba(0,0,255,0.4);
+    box-shadow: 0px 5px 8px rgba(0,0,255,0.4), 0px -5px 8px rgba(0,0,255,0.4);}
+  73.33%  {background-color: rgba(75,0,130,0.4);
+    box-shadow: 0px 5px 8px rgba(75,0,130,0.4), 0px -5px 8px rgba(75,0,130,0.4);}
+  86.66% {background-color: rgba(84,22,180,0.4);
+    box-shadow: 0px 5px 8px rgba(84,22,180,0.4), 0px -5px 8px rgba(84,22,180,0.4);}
+  100% {background-color: rgba(255,0,0,0.4);
+    box-shadow: 0px 5px 8px rgba(255,0,0,0.4), 0px -5px 8px rgba(255,0,0,0.4);}
+}
+
+.title a {
+  text-decoration: none;
+}
+
+.title h1{
+  color: white;
+  overflow: hidden;
+  padding: 16px;
+}
+
+/* Style the content */
+.content {
+  padding: 16px;
+  text-align: center;
+  animation: text_rainbowing 15s infinite;
+}
+
+.content ul {
+  list-style-type: none;
+}

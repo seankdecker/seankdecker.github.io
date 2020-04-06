@@ -1,0 +1,7 @@
+# ignore media that isn't needed
+/music
+/videos
+/models
+# misc
+.DS_Store
+

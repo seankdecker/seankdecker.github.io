@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Sean</title>
+  <meta name="author" content="Sean"/>
+  <link id="style" rel="stylesheet" type="text/css" href="css/indicies/index.css" />
+  <script type="text/javascript">
+    "use strict";
+    function swapStyleSheet() {
+      // get random styleSheet that is not the current one
+      var currSheet = document.getElementById("style").href.match(/css\/indicies\/(\w+)\.css/)[1];
+      var sheets = ["rainbow", "nothing", "index"];
+      sheets.splice([sheets.indexOf(currSheet)], 1);
+      let newSheet =  sheets[Math.floor(sheets.length * Math.random())];
+      document.getElementById("style").setAttribute("href", "css/indicies/" + newSheet + ".css");
+    }
+  </script>
+</head>
+<body>
+
+  <div class="sidenav">
+    <div class="page"><a href="./pages/sides/recaman.html">Recam&#225;n Sequence</a></div>
+    <div class="page"><a href="./pages/sides/prime_spiral.html">Primes Spiral</a></div>
+    <div class="page"><a href="./pages/sides/sukiyaki.html">上を向いて歩こう</a></div>
+    <div class="page"><a href="./pages/sides/chaos_game.html">Random Jumps</a></div>
+    <div class="page"><a href="./pages/sides/hana.html">Hana</a></div>
+    <div class="page"><a href="./pages/sides/stars.html">Stars</a></div>
+    <div class="page"><a href="./pages/sides/fractals.html">Fractals</a></div>
+    <div class="page"><a href="./pages/sides/multiplication.html">Multiplication Circles</a></div>
+  </div>
+
+  <div>
+    <div class="title" onclick="swapStyleSheet()">
+      <h1>
+        <a>Sean</a>
+      </h1>
+    </div>
+    <div class="content">
+      <h2>Here is my website</h2>
+      <h4>Things to add:</h4>
+      <ul>
+        <li>hailstones/ collatz conjecture</li>
+        <li>sign in feature</li>
+        <li>fractals (spinski's triangle, ect.)</li>
+        <li>sorting algorithms</li>
+        <li>play videos/music</li>
+        <li>snowflakes, http://www.snowcrystals.com/</li>
+      </ul>
+    </div>
+  </div>
+
+</body>
+</html>

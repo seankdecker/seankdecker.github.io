@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!--
+This page plays a random video from a selection of =
+versions of 上を向いて歩こう　by 坂本　九 (in English,
+Sukiyaki by Ryu Sakamoto)
+
+Not only do I enjoy the song's melody, but I think
+it's history is quite fascinating.
+
+The song was crated in 1961, in a still realing
+post-war Japan. It was taken to America, and
+called Sukiyaki because Ue wo muite arukou was a
+little wordy and supposidly hard to remember for
+American audiences.
+
+It made the Billboard top 100, an uncommon feat for
+an East Asian song (as of late actually, Kpop has
+been changing this). The song was covered by Selena
+and it was played as mood music on the Gemini 7.
+
+Kyu Sakamoto died in the crash of Japan Airlines 123,
+the most deadly single aircraft accident in history
+as of this writing.
+-->
+<html>
+  <head>
+    <title>上を向いて歩こう</title>
+    <style>
+    * {
+      margin: 0px;
+      padding: 0px;
+    }
+    body {
+      margin: 0;
+      font-family: Courier, sans-serif;
+      background-color: white;
+    }
+    </style>
+    <meta name="author" content="Sean" />
+  </head>
+  <body onclick='document.getElementById('vid').play();'>
+    <center>
+    <video id="vid" width="100%">
+      <source src="../../../videos/sukiyaki/上を向いて歩こう_nhk_video.mp4" type="video/mp4"/>
+      Your browser does not support HTML5 video.
+    </video>
+    </center>
+    <script type="text/javascript">
+      var vid = document.getElementById('vid');
+      var possible_srcs = ['上を向いて歩こう_music_video.mp4',
+                           '上を向いて歩こう_preformance.mp4',
+                           '上を向いて歩こう_personal_video.mp4',
+                           '上を向いて歩こう_later_preformance.mp4',
+                           '上を向いて歩こう_another_preformance_1961.mp4',
+                           '上を向いて歩こう_nhk_video.mp4'];
+      var index = Math.floor(Math.random() * possible_srcs.length);
+      vid.src = '../../videos/sukiyaki/' + possible_srcs[index];
+      document.addEventListener("click", function(){
+        vid.play();
+      });
+    </script>
+  </body>
+</html>

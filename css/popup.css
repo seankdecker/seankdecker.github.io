@@ -1,0 +1,25 @@
+#popup {
+  /* position */
+  position: absolute;
+  left: 50%;  top: 50%;
+  transform: translate(-50%, -50%);
+  /* style */
+  opacity: 1;
+  background-color: #1A1A1B;
+  box-shadow: 10px 10px 10px #7D7D7D;
+  border: 1px solid #D7DADC;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+#popup p {
+  font: 1em Courier, sans-serif;
+  line-height: 1.3;
+  color: #DDDDDD;
+  padding: 4px;
+}
+
+#popup .message{
+  text-align: center;
+  color: red;
+}

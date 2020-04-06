@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <title>Here is my bad website</title>
+  <meta name="author" content="Sean" />
+  <link rel="stylesheet" type="text/css" href="../../../css/sides.css" />
+  <!-- Adding Popup Explanation-->
+  <script id='js' type='text/javascript' src='../../../js/add_popup.js'></script>
+  <script>
+    addPopup([
+      'This will create a pretty picture visualization of the Recaman Sequence. \
+      The Recaman Sequence, A005132, can be defined recursively as:',
+      'a(0) = 0',
+      'for n > 0:',
+      'a(n) = a(n-1) - n if positive and not already in the sequence,',
+      'a(n) = a(n-1) + n otherwise',
+      'Inspried by the Numerphile video on Recaman \
+      https://www.youtube.com/watch?v=FGC5TdIiT9U'
+    ]);
+  </script>
+  <link rel="stylesheet" type="text/css" href="../../../css/popup.css" />
+</head>
+<body>
+  <sidenav id='sidenav'>
+  <p>Enter an positive integer for the spacing of the number line.</p>
+    <input type="text" id="input_spacing" value="10">
+    <button type="button" onclick="main()">Change Num Elements</button>
+    <button type="button" onclick="animate = true; animation();">Play Movie</button>
+    <button type="button" onclick="animate = false;">Pause Movie</button>
+  </sidenav>
+  <canvas class="row_canvas" id="canvas"  width='1400' height='750'></canvas>
+
+  <script type="text/javascript">
+  /*
+  This will create a pretty picture visualization of
+  the Recaman Sequence. The Recaman Sequence, A005132,
+  can be defined recursively as:
+
+   a(0) = 0
+   for n > 0 {
+      a(n) = a(n-1) - n if positive and not already in the sequence,
+      a(n) = a(n-1) + n otherwise }
+
+  We don't know if the sequence goes on forever.
+  Here is the beginnings of the sequence:
+  0, 1, 3, 6, 2, 7, 13, 20, 12, 21, 11, 22,
+  10, 23, 9, 24, 8, 25, 43, 62, 42, 63, 41,
+  18, 42, 17, 43, 16, 44, 15, 45, 14, 46, 79,
+  113, 78, 114, 77, 39, 78, 38, 79, 37, 80, 36,
+  81, 35, 82, 34, 83, 33, 84, 32, 85, 31, 86, 30,
+  87, 29, 88, 28, 89, 27, 90, 26, 91, 157, 224, 156,
+  225, 155
+
+  Inspried by the Numerphile video on Recaman
+  https://www.youtube.com/watch?v=FGC5TdIiT9U
+  */
+
+  // Global Variables
+  const c = document.getElementById('canvas');
+  const CTX = c.getContext('2d');
+  const width = canvas.width;
+  const height = canvas.height;
+  let dist = 10; // distance of 1 unit in imaginary number line
+  let len = 11; // length of line
+  let speed = 1; // how much len changes at each timestep
+
+  let animate = false; // controls animation frame recursion
+
+  const sequence = recaman(Math.floor(width)); // precalculate recaman seq
+  console.log('Recaman sequence: ', sequence);
+  main();
+
+  // draw half circle with center and radius r
+  // if top, draw top half, else draw bottom half
+  function drawHalfCircle(center, r, top) {
+    CTX.beginPath();
+    if (top) {
+      CTX.arc(center[0], center[1], r, Math.PI, 2 * Math.PI);
+    } else {
+      CTX.arc(center[0], center[1], r, 0, Math.PI);
+    }
+    CTX.stroke();
+  }
+
+  // function setDist(len) {
+  //   let dist_travelled = 0;
+  //   let x = 0, i = 0;
+  //   while (len > 0) {
+  //     let elem = recaman[i];
+  //      -
+  //     dist_travelled +=
+  //     i++;
+  //   }
+  // }
+
+  function drawRecaman(recaman, width, height) {
+    console.log('Spacing',SPACING);
+    console.log(width, height);
+    let i = 1;
+    let center = [(recaman[0] + recaman[1]) * SPACING / 2, height/2]
+    let top = true;
+    while (center[0] + i < width && center[1] + i < height) {
+      drawHalfCircle(center, i * SPACING / 2, top);
+      center[0] = (recaman[i] + recaman[i + 1]) * SPACING / 2;
+      top = !top;
+      i++;
+    }
+  }
+
+  //Return recaman sequence up to limit n
+  function recaman(n) {
+    let increment = 1, recaman = [0];
+    while (true) {
+      let back = recaman[recaman.length - 1] - increment;
+      let forward = recaman[recaman.length - 1] + increment;
+      if (back > 0 && !recaman.includes(back)){
+        recaman.push(back);
+      } else if (forward <= n) { recaman.push(forward);
+      } else { return recaman; }
+      increment++;
+    }
+  }
+
+  function getSpacing() {
+    let possible_spacing = parseInt(document.getElementById("input_spacing").value);
+    console.log(possible_spacing);
+    if (!(possible_spacing > 0) || possible_spacing !== possible_spacing) {
+      document.getElementById("input_spacing").value = 'Not a valid number';
+      SPACING = 10;
+      throw new Error('An invalid number was entered. Please enter a positive integer');
+    }
+    SPACING = possible_spacing;
+  }
+
+  // get Canvas properties
+  function main() {
+    getSpacing();
+    CTX.clearRect(0, 0, canvas.width, canvas.height);
+    drawRecaman(sequence, width, height);
+  }
+
+  function movie() {
+    dist += speed;
+    buildFlower();
+    if (animate) { window.requestAnimationFrame(movie); }
+  }
+
+  function newRecaman() {
+    SPACING--;
+    if (SPACING < 1) {
+      return;
+    }
+    CTX.clearRect(0, 0, canvas.width, canvas.height);
+    drawRecaman(sequence, width, height);
+  }
+  </script>
+</body>
+</html>

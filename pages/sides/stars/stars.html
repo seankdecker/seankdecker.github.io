@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <title>Stars</title>
+  <meta name="author" content="Sean" />
+  <link rel="stylesheet" type="text/css" href="../../../css/sides.css" />
+  <!-- Adding Popup Explanation-->
+  <script id='js' type='text/javascript' src='../../../js/add_popup.js'></script>
+  <script>
+    addPopup([
+      'Make a star!',
+      "Pick a polygon from the side or choose some number of sides! Then choose \
+      how many verticies to skip with each line. Soon you'll have a star",
+      'getting wEirD means your verticies might be messed up a bit'
+    ]);
+  </script>
+  <link rel="stylesheet" type="text/css" href="../../../css/popup.css" />
+</head>
+<body>
+  <p>Pick a regular polygon and make it a star!</p>
+  <sidenav id='sidenav'>
+  <button type="button" onclick="changeShape(3);">Triangle</button>
+  <button type="button" onclick="changeShape(4);">Square</button>
+  <button type="button" onclick="changeShape(5);">Pentagon</button>
+  <button type="button" onclick="changeShape(6);">Heptagon</button>
+  <button type="button" onclick="changeShape(7);">Septagon</button>
+  <button type="button" onclick="changeShape(8);">Octagon</button>
+  <button type="button" onclick="changeShape(9);">Nonagon</button>
+  <button type="button" onclick="changeShape(10);">Decagon</button>
+  <button type="buttom" onclick="changeShape(11);">Hendecagon</button>
+  <button type="buttom" onclick="changeShape(12);">Dodecagon</button>
+  <button type="buttom" onclick="changeShape(13);">Tridecagon</button>
+  <button type="buttom" onclick="changeShape(12);">Tetradecagon</button>
+  <button type="button" onclick="changeShape(50);">Pentacontagon</button>
+  <button type="button" onclick="changeShape(100);">Hectogon</button>
+  <button type="buttom" onclick="makeCircle()">Circle</button>
+  <br/>
+  <br/>
+  <input type="text" id="input_shape" value="enter num sides">
+  <button type="buttom" onclick="changeShapeInput()">Make Shape!</button>
+  <input type="text" id="input_skips" value="enter num skips">
+  <button type="buttom" onclick="changeSkipsInput()">Change Jumps!</button>
+  <br/>
+  <br/>
+  <button type="button" onclick="getWeird();">get wEirD</button>
+  <br/><br/>
+  <button type="button" onclick="makeStar(600);">make it a star!</button>
+  <button type="button" onclick="makeStar(0);">make it an insta-star!</button>
+  </sidenav>
+  <sidenav style="margin-left: 100px;" id='sidenav'>
+    <button type="button" onclick="changeSkips(1);">0 skip</button><br>
+    <button type="button" onclick="changeSkips(2);">1 skip</button><br>
+    <button type="button" onclick="changeSkips(3);">2 skip</button><br>
+    <button type="button" onclick="changeSkips(4);">3 skip</button><br>
+    <button type="button" onclick="changeSkips(5);">4 skip</button><br>
+    <button type="button" onclick="changeSkips(6);">5 skip</button><br>
+    <button type="button" onclick="changeSkips(7);">6 skip</button><br>
+    <button type="button" onclick="changeSkips(8);">7 skip</button><br>
+    <button type="button" onclick="changeSkips(9);">8 skip</button><br>
+    <button type="button" onclick="changeSkips(21);">20 skip</button><br>
+    <button type="button" onclick="changeSkips(31);">30 skip</button>
+  </sidenav>
+
+  <canvas class="row_canvas" id="canvas"  width='1400' height='750'></canvas>
+  <script type="text/javascript" src="../../../js/drawing_lib.js"></script>
+  <script type="text/javascript">
+    const canvas = new Canvas('canvas');
+    var SHAPE = -1, JUMPS = -1;
+    var curr_vert = 0, verticies = [], visited = [];
+    changeShape(7);
+    changeSkips(2);
+
+    function reset() {
+      curr_vert = 0, visited = [];
+    }
+
+    function changeShape(numVerticies) {
+      const x = canvas.width/2, y = canvas.height/2, radius = canvas.height/2 - 10;
+      reset();
+      verticies = [];
+      canvas.clear();
+      SHAPE = numVerticies;
+      var theta = 0;
+      for (let i = 0; i < SHAPE; i++) {
+        let vert_x = x + radius * Math.sin(theta);
+        let vert_y = y - radius * Math.cos(theta);
+        verticies.push([vert_x, vert_y]);
+        canvas.drawPoint(vert_x, vert_y, 1.5);
+        theta += 2 * Math.PI / numVerticies;
+      }
+    }
+
+    function changeShapeInput() {
+      let numVert = parseInt(document.getElementById("input_shape").value);
+      // console.log(possible_spacing);
+      // if (!(possible_spacing > 0) || possible_spacing !== possible_spacing) {
+      //   document.getElementById("input_spacing").value = 'Not a valid number';
+      //   SPACING = 10;
+      //   throw new Error('An invalid number was entered. Please enter a positive integer');
+      // }
+      changeShape(numVert);
+    }
+
+    function changeSkipsInput() {
+      let numSkips = parseInt(document.getElementById("input_skips").value);
+      // console.log(possible_spacing);
+      // if (!(possible_spacing > 0) || possible_spacing !== possible_spacing) {
+      //   document.getElementById("input_spacing").value = 'Not a valid number';
+      //   SPACING = 10;
+      //   throw new Error('An invalid number was entered. Please enter a positive integer');
+      // }
+      changeSkips(numSkips);
+    }
+
+    function changeSkips(jumps){
+      reset();
+      JUMPS = jumps;
+    }
+
+    function drawLine() {
+      if (visited.includes(curr_vert)) { return ;}
+      canvas.drawLine(verticies[curr_vert][0], verticies[curr_vert][1],
+        verticies[(curr_vert + JUMPS) % SHAPE][0], verticies[(curr_vert + JUMPS) % SHAPE][1]);
+      visited.push(curr_vert);
+      curr_vert = (curr_vert + JUMPS) % SHAPE;
+      if (visited.includes(curr_vert)) { curr_vert++; }
+    }
+
+    function makeCircle() {
+      canvas.clear();
+      SHAPE = -1, verticies = [];
+      canvas.drawArc(width/2, height/2, height/2 - 10);
+    }
+
+  function makeStar(wait) {
+    if (visited.length >= SHAPE) { }
+    else { setTimeout(function(){ drawLine(); makeStar(wait); }, wait); }
+  }
+
+  function getWeird() {
+    const x = canvas.width/2, y = canvas.height/2, radius = canvas.height/2 - 10;
+    reset();
+    // CTX.clearRect(0, 0, canvas.width, canvas.height);
+    verticies = [];
+    var theta = 0;
+    for (let i = 0; i < SHAPE; i++) {
+      let vert_x = x + radius * Math.sin(theta) - (Math.random() * 30) + (Math.random() * 30);
+      let vert_y = y - radius * Math.cos(theta) - (Math.random() * 30) + (Math.random() * 30);
+      verticies.push([vert_x, vert_y]);
+      canvas.drawPoint(vert_x, vert_y, 1.5);
+      theta += 2 * Math.PI / SHAPE;
+    }
+  }
+
+  // add Event listeners!
+  canvas.c.addEventListener("click", drawLine);
+  const side = document.getElementById('sidenav');
+  side.addEventListener("mouseover", () => {canvas.c.removeEventListener("click", drawLine);});
+  side.addEventListener("mouseout", () => {canvas.c.addEventListener("click", drawLine);});
+  </script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<!--
+Resources:
+-->
+<html lang="en-US">
+<head>
+  <title>Sorting</title>
+  <meta name="author" content="Sean" />
+  <link rel="stylesheet" type="text/css" href="../../../css/sides.css" />
+  <style>body {background-color:black;}</style>
+  <!-- Adding Popup Explanation-->
+  <script id='js' type='text/javascript' src='../../../js/add_popup.js'></script>
+  <script>
+    addPopup([
+      'CONSTRUCTION IN PROGRESS',
+      'Visualizes the work of various sorting algorithms on an unsorted list'
+    ]);
+  </script>
+  <link rel="stylesheet" type="text/css" href="../../../css/popup.css" />
+</head>
+<body>
+  <p></p>
+  <div id='sidenav'></div>
+  <canvas class="row_canvas" id="canvas"  width='3000' height='3000' margin='10px'
+          style='height:750px;width:750px;'></canvas>
+  <script type="text/javascript" src="../../../js/drawing_lib.js"></script>
+  <script type="text/javascript">
+    // Setup Canvas
+    const canvas = new Canvas('canvas'),  sidebar = new Sidebar('sidenav');
+    sidebar.addChoices();
+    let numElems = 1000, range = 200, spacing = 100, waittime = 0;
+    let red = "hsl(223, 100%, 82%)", blue = "hsl(180, 100%, 82%)";
+
+    class List {
+      constructor(n, [x0, y0], [x1, y1]) {
+        let width = x1 - x0, height = y1 - y0;
+        this.elemWidth = width / n;
+        this.elemHeight = height / range;
+        for (let i = 0; i < n; i++) {
+          this[i] = Math.ceil(range * Math.random());
+        }
+        this.n = n;
+        this.focus = [0,0]
+      }
+
+      draw(x, y=canvas.height-20) {
+        for (let i = 0; i < this.n; i++) {
+          canvas.drawPoly([
+            [x + i * this.elemWidth, y],
+            [x + i * this.elemWidth, y - this.elemHeight * this[i]],
+            [x + i * this.elemWidth + this.elemWidth, y - this.elemHeight * this[i]],
+            [x + i * this.elemWidth + this.elemWidth, y]
+          ], (this.focus && this.focus.includes(i))? blue: red);
+          if (this.done && this.done.includes(i)) { // draw triangle on focus
+            canvas.drawPoly([
+              [x + i * this.elemWidth + this.elemWidth / 2, y - this.elemHeight * this[i] - spacing],
+              [x + i * this.elemWidth, y - this.elemHeight * this[i] - 2*spacing],
+              [x + i * this.elemWidth + this.elemWidth, y - this.elemHeight * this[i] - 2*spacing],
+            ], blue);
+            canvas.drawPoly([
+              [x + i * this.elemWidth + 1 * this.elemWidth / 4, y - this.elemHeight * this[i] - 2 * spacing],
+              [x + i * this.elemWidth + 1 * this.elemWidth / 4, y - this.elemHeight * this[i] - 3 * spacing],
+              [x + i * this.elemWidth + 3 * this.elemWidth / 4, y - this.elemHeight * this[i] - 3 * spacing],
+              [x + i * this.elemWidth + 3 * this.elemWidth / 4, y - this.elemHeight * this[i] - 2 * spacing],
+            ], blue);
+          }
+        }
+      }
+
+      swap(i ,j) {
+        let temp = this[i];
+        this[i] = this[j], this[j] = temp;
+      }
+
+      bubbleSort() {
+        let i = 0, iteration = 0;
+        this.bubbleSortRec(i, iteration);
+      }
+
+      bubbleSortRec(i, iteration) {
+        // for loop
+        if (i > this.n - iteration - 2) { iteration++; i = 0 }
+        if (iteration > this.n) return;
+        this.focus = [i, i + 1], this.done = [this.n - iteration];
+        // logic
+        if (this[i] > this[i + 1]) { this.swap(i, i+1); }
+        // recurse
+        setTimeout(() => {
+          window.requestAnimationFrame(() => { this.bubbleSortRec(i + 1, iteration); });
+        }, waittime);
+      }
+
+      insertionSort() {
+        let i = 1, unsortedArrIndex = 1;
+        this.insertionSortRec(i, unsortedArrIndex);
+      }
+
+      insertionSortRec(i, unsortedArrIndex) {
+        // for loop
+        if (i === 0) { unsortedArrIndex++; i = unsortedArrIndex; }
+        if (unsortedArrIndex === this.n) return;
+        this.focus = [i, i-1], this.done = [unsortedArrIndex];
+        // logic
+        if (this[i] < this[i - 1]) { this.swap(i, i-1); }
+        // recurse
+        setTimeout(() => {
+          this.insertionSortRec(i - 1, unsortedArrIndex);
+        }, waittime);
+      }
+
+      mergeSort() {
+        // stack of ranges to be sorted
+        let stack = [];
+        stack.push(() => { this.mergeSortRec(0, this.n - 1, stack) });
+        this.mergeSortHelper(stack);
+      }
+
+      mergeSortHelper(stack) {
+        setTimeout(() => {
+          let func = stack.shift();
+          if (!func) { return; }
+          func();
+          this.mergeSortHelper(stack);
+        }, waittime);
+      }
+
+      mergeSortRec(low, high, stack) {
+        if (low == high) { return; }
+        let mid = Math.floor((low + high) / 2);
+        this.focus = [];
+        // for (let i = low; i < high; i++) { this.focus.push(i); }
+        stack.unshift(() => { this.merge(low, mid, high, stack) });
+        stack.unshift(() => { this.mergeSortRec(mid + 1, high, stack) });
+        stack.unshift(() => { this.mergeSortRec(low, mid, stack) });
+      }
+
+      merge(low, mid, high) {
+        let n1 = mid - low + 1, n2 = high - mid;
+        let left = [], right = []; // temp arrs
+        for (let i = 0; i < n1; i++) { left.push(this[i + low]); }
+        for (let j = 0; j < n2; j++) { right.push(this[j + mid + 1]); }
+        let i = 0,/*index of left*/j = 0,/*index of right*/k = low;/*index of merged arr*/
+        while (i < n1 && j < n2) {
+          if (left[i] <= right[j]) {
+            this[k] = left[i];
+            i++;
+          } else {
+            this[k] = right[j];
+            j++;
+          }
+          k++;
+        }
+        while (i < n1) {
+          this[k] = left[i];
+          i++; k++;
+        }
+        while (j < n2) {
+          this[k] = right[j];
+          j++; k++;
+        }
+      }
+
+      // binaryInsertionSort() {
+      //   let l = 0, r = 1, unsortedArrIndex = 1;
+      //   this.binaryInsertionSortRec(l, r, unsortedArrIndex);
+      // }
+      //
+      // binaryInsertionSortRec(l, r, unsortedArrIndex) {
+      //   // for loop
+      //   if (i === 0) { unsortedArrIndex++; i = unsortedArrIndex; }
+      //   if (unsortedArrIndex === this.n) return;
+      //   this.focus = [i, i-1], this.done = [unsortedArrIndex];
+      //   // logic
+      //   if (this[i].value < this[i - 1].value) { this.swap(i, i-1); }
+      //   // recurse
+      //   setTimeout(() => {
+      //     window.requestAnimationFrame(() => { this.binaryInsertionSortRec(l, r, unsortedArrIndex); });
+      //   }, waittime);
+      // }
+    }
+
+    let list = new List(numElems, [0,0], [canvas.width, 3 * canvas.height / 4]);
+    canvas.animate(() => list.draw(0));
+    list.insertionSort();
+  </script>
+</body>
+</html>

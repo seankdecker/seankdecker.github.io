@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<!--
+Resources:
+Boids - Background and Update by Draig Reynolds
+  https://www.red3d.com/cwr/boids/
+The Coding Train - Coding Challenge #124: Flocking Simulation
+  https://www.youtube.com/watch?v=mhjuuHl6qHM
+Coding Challenge
+https://www.youtube.com/watch?v=bqtqltqcQhw
+-->
+<html lang="en-US">
+<head>
+  <title>Boids</title>
+  <meta name="author" content="Sean" />
+  <link rel="stylesheet" type="text/css" href="../../../css/sides.css" />
+  <!-- Adding Popup Explanation-->
+  <script id='js' type='text/javascript' src='../../../js/add_popup.js'></script>
+  <script>
+    addPopup([
+      "Boids! It's close to 'birds', get it? I don't really, either, but \
+      Draig Reynolds does I guess.",
+      'Boids are simple agents, that attempt to align their velocities, \
+      cohere together, and seperate to avoid overlapping each other. \
+      Under these simple rules, we get an emergent behavior that resembles \
+      flocking!',
+      'Click to add a boid!'
+    ]);
+  </script>
+  <link rel="stylesheet" type="text/css" href="../../../css/popup.css" />
+</head>
+<body>
+  <sidenav id='sidenav'>
+  </sidenav>
+  <canvas class="row_canvas" id="canvas"  width='750' height='750' margin='10px'></canvas>
+  <script type="text/javascript" src="../../../js/Vector.js"></script>
+  <script type="text/javascript" src="../../../js/drawing_lib.js"></script>
+  <script type="text/javascript">
+    // Setup Canvas
+    const canvas = new Canvas('canvas');
+
+    class Boid {
+      constructor(x=canvas.width * Math.random(), y=canvas.height * Math.random()) {
+        this.pos = new Vector(2, [x, y]);
+        this.vel = new Vector(2, [Math.random() - Math.random(), Math.random() - Math.random()]);
+        this.vel.mult(20);
+        this.acc = new Vector(2);
+        // drawing constants
+        this.size = 5, this.beak = 15;
+        // physics constants
+        this.groupSeperation = 40;
+        this.speedLimit = 2, this.maxForce = 0.2;
+        // this.weight = 100;
+      }
+
+      draw() {
+        canvas.drawArc(this.pos[0], this.pos[1], this.size);
+        canvas.drawLine(this.pos[0], this.pos[1],
+            this.pos[0] + this.vel[0] * (this.beak / this.vel.mag()),
+            this.pos[1] + this.vel[1] * (this.beak / this.vel.mag()));
+      }
+
+      fly() {
+        this.pos.add(this.vel);
+        if (this.pos[0] > canvas.width) { this.pos[0] = 0 }
+        if (this.pos[1] > canvas.height) { this.pos[1] = 0 }
+        if (this.pos[0] < 0) { this.pos[0] = canvas.width }
+        if (this.pos[1] < 0) { this.pos[1] = canvas.height }
+        this.vel.add(this.acc);
+      }
+
+      align(flock) {
+        let avgVel = new Vector(2), neighbors = 0;
+        for (let other of flock.flock) {
+          if (other != this && this.pos.dist(other.pos) <= this.groupSeperation) {
+            avgVel.add(other.vel); neighbors++;
+          }
+        }
+        if (neighbors > 0) {
+          avgVel.div(neighbors);
+          avgVel.setMag(this.speedLimit);
+          avgVel.sub(this.vel);
+          avgVel.limit(this.maxForce);
+        }
+        return avgVel; // alignment force
+      }
+
+      coherence(flock) {
+        let avgPos = new Vector(2), neighbors = 0;
+        for (let other of flock.flock) {
+          if (other != this && this.pos.dist(other.pos) <= this.groupSeperation) {
+            avgPos.add(other.pos); neighbors++;
+          }
+        }
+        if (neighbors > 0) {
+          avgPos.div(neighbors);
+          avgPos.sub(this.pos);
+          avgPos.setMag(this.speedLimit);
+          avgPos.sub(this.vel);
+          avgPos.limit(this.maxForce);
+        }
+        return avgPos; // alignment force
+      }
+
+      seperate(flock) {
+        let avgPos = new Vector(2), neighbors = 0;
+        for (let other of flock.flock) {
+          if (other != this && this.pos.dist(other.pos) <= this.groupSeperation) {
+            let diff = new Vector(2, [this.pos[0] - other.pos[0], this.pos[1] - other.pos[1]]);
+            // console.log(diff);
+            diff.div(this.pos.dist(other.pos));
+            avgPos.add(diff); neighbors++;
+          }
+        }
+        if (neighbors > 0) {
+          avgPos.div(neighbors);
+          avgPos.setMag(this.speedLimit);
+          avgPos.sub(this.vel);
+          avgPos.limit(this.maxForce);
+        }
+        return avgPos; // alignment force
+      }
+
+      update(flock) {
+        this.acc.set([0, 0]);
+        let alignmentForce = this.align(flock);
+        let cohesionForce = this.coherence(flock);
+        let seperationForce = this.seperate(flock);
+        seperationForce.mult(1.1);
+        this.acc.add(alignmentForce);
+        this.acc.add(cohesionForce);
+        this.acc.add(seperationForce);
+        this.vel.limit(this.speedLimit);
+        this.vel.check();
+        this.pos.check();
+        this.acc.check();
+      }
+    }
+
+    class Flock {
+      constructor(n=0) {
+        this.flock = [];
+        for (let i = 0; i < n; i++) { this.insert()}
+      }
+
+      draw() {
+        for (let i = 0; i < this.flock.length; i++) { this.flock[i].draw(); }
+      }
+
+      update() {
+        for (let i = 0; i < this.flock.length; i++) { this.flock[i].update(this); }
+      }
+
+      fly() {
+        for (let i = 0; i < this.flock.length; i++) { this.flock[i].fly(); }
+      }
+
+      insert(x=canvas.width * Math.random(), y=canvas.height * Math.random()) {
+        this.flock.push(new Boid(x, y));
+      }
+    }
+
+    let flock = new Flock(0);
+    canvas.animate(() => {flock.draw();flock.update();flock.fly();});
+
+    function addBoid(e) {
+      flock.insert(e.clientX - canvas.c.offsetLeft, e.clientY - canvas.c.offsetTop);
+    }
+
+    const side = document.getElementById('sidenav');
+    canvas.c.addEventListener("click", e => {addBoid(e)});
+  </script>
+</body>
+</html>
