@@ -6,7 +6,7 @@ class Canvas {
       id of canvas - string */
   constructor(id) {
     this.c = document.getElementById(id);
-    this.ctx = this.c.getContext('2d');
+    this.ctx = this.c.getContext('2d', {alpha: false});
     this.width = this.c.width;
     this.height = this.c.height;
     this.playing = false;

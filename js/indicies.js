@@ -43,15 +43,18 @@ var scripts = {
   pokemon: () => {
     clearAll();
     // have random pokemon run around screen
-    let animes = ['pace', 'circle', 'speeder', 'circle3', 'shy', 'spin', 'shy2', 'bottom', "pace2", "pace3", "pace4"]
-    let games = ['red-blue', 'red-green', 'yellow'];
+    const animes = ['pace', 'circle', 'speeder', 'circle3', 'shy', 'spin', 'shy2', 'bottom', "pace2", "pace3", "pace4"]
+    const games = ['red-blue', 'red-green', 'yellow'];
     let game = games[Math.floor(games.length * Math.random())];
     let numPoke = 151;
     for (var i = 0; i < pages.length; i++) {
       let page = document.getElementById(pages[i]);
       let anime = animes[Math.floor(animes.length * Math.random())];
-      animes.splice([animes.indexOf(anime)], 1);
       let animeStyle = "animation: "+anime+" 9s linear infinite;";
+      if (animes.length > 0)
+        animes.splice([animes.indexOf(anime)], 1);
+      else
+        animeStyle = randomPokemonPath();
       let pokemon = Math.floor(numPoke * Math.random()) + 1;
       let imgStyle = "background-image: url('pictures/pokemon/pokemon_gen1_sprites/"+game+"/"+pokemon+".png');";
       page.setAttribute("style", animeStyle + imgStyle);
@@ -90,6 +93,38 @@ var scripts = {
   },
 }
 
+// build a randomize keyframes animation in css and return the 
+// resulting animation style to be added to an element
+function randomPokemonPath() {
+  let animeIndex = Math.floor(Math.random() * 10000);
+  let animeName = `random-path-${animeIndex}`;
+  const minTop = 5,    maxTop = 95;
+  const minRight = 5,  maxRight = 95;
+  const minDeg = -360, maxDeg = 360;
+  const transforms = 5;
+  let keyframes = `@keyframes ${animeName} {\n`
+  for (let i = 0; i < transforms; i++) {
+    let top = minTop + Math.floor(Math.random() * (maxTop - minTop));
+    let right = minRight + Math.floor(Math.random() * (maxRight - minRight));
+    let deg = minDeg + Math.floor(Math.random() * (maxDeg - minDeg));
+    let per = i * 100 / transforms;
+    keyframes += 
+      `${per}% { top: ${top}%; right: ${right}%; transform: rotate(${deg}deg)}`
+    // to make path a cycle
+    if (i == 0)
+      keyframes += 
+        `100% { top: ${top}%; right: ${right}%; transform: rotate(${deg}deg)}`
+  } 
+  addStyle(keyframes);
+  return "animation: "+ animeName +" 9s linear infinite;";
+}
+
+function addStyle(styleText) {
+  let styleElem = document.createElement("style");
+  styleElem.appendChild(document.createTextNode(styleText));
+  document.head.appendChild(styleElem); 
+}
+
 function swapStyle() {
   // get random styleSheet that is not the current one
   var currSheet = document.getElementById("style").href.match(/css\/indicies\/(\w+)\.css/)[1];
@@ -98,6 +133,7 @@ function swapStyle() {
   let newSheet =  sheets[Math.floor(sheets.length * Math.random())];
   document.getElementById("style").setAttribute("href", "css/indicies/" + newSheet + ".css");
   scripts[newSheet]();
+  window.location.hash = newSheet;
 }
 
 function clearAll() {
@@ -108,4 +144,11 @@ function clearAll() {
     page.setAttribute("style", "");
   }
 }
-scripts['index']();
+
+(function main() {
+  let style_sheet = window.location.hash.substr(1);
+  if (!(style_sheet in scripts))
+    style_sheet = 'index';
+  document.getElementById("style").setAttribute("href", "css/indicies/" + style_sheet + ".css");
+  scripts[style_sheet]();
+})();

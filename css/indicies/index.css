@@ -101,14 +101,16 @@ a:link, a:visited {
 
 /* Style the content */
 .content {
-  padding: 16px;
-  color: #DDDDDD;
+  padding: 15px;
+  color: #CCCCCC;
 }
 
-.content * {
+.content div {
   padding: 7px;
   margin: 15px;
-  border: 1px solid #D7DADC;
-  background-color: #1A1A1B;
   border-radius: 4px;
+}
+
+.content a {
+  color: blue;
 }

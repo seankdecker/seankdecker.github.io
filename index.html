@@ -1,55 +1,94 @@
 <?xml version='1.0' encoding='utf-8'?>
 <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Strict//EN'
  'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'>
+ <!--hailstones/ collatz conjecture-->
+ <!--sorting algorithms-->
+ <!--play videos/music-->
+ <!--multiarm bandit game-->
+ <!--Game theory tit for tat iterated prisoner's dilemma-->
+ <!--snowflakes, http://www.snowcrystals.com/-->
 <html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
 <head>
   <title>Sean</title>
   <meta name='author' content='Sean'/>
   <link id='style' rel='stylesheet' type='text/css' href='css/indicies/index.css' />
   <script id='js' type='text/javascript' src='js/login.js'></script>
+  <script id='js' type='text/javascript' src='js/user-tracking.js'></script>
+  <script type="application/javascript">
+    function getIP(json) {
+      console.log("My public IP address is: ", json.ip);
+    }
+  </script>
+  <script type="application/javascript" src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
 </head>
 <body>
-  <div class='sidenav'> <canvas id='clock' width='400px' height='400px'></canvas> </div>
+  <div class='sidenav'> 
+    <canvas id='clock' width='400px' height='400px'></canvas> 
+  </div>
   <div class='content-container'>
     <div class='title'>
       <h1 onclick='swapStyle();'>Sean</h1>
       <p id='login' onclick='login();'>login</p>
     </div>
     <div class='content'>
-    <h2>Hello! This is my website!</h2>
-    <!-- TODO -- >
-    <!-- <h4>Things still under construction:</h4>
-    <ul>
-      <a href='./index_2.html'>Still under Constructin...</a>
-      <li>hailstones/ collatz conjecture</li>
-      <li>sign in feature</li>
-      <li>sorting algorithms</li>
-      <li>play videos/music</li>
-      <li>multiarm bandit game</li>
-      <li>Game theory tit for tat iterated prisoner's dilemma</li>
-      <li>snowflakes, http://www.snowcrystals.com/</li>
-    </ul> -->
-    <h4>
-      I'm Sean, a Computer Science Masters Student at Stanford.
-      I enjoy math and making things that I can play with!
-    </h4>
-    <h4>Explore some of my small projects on the left sidebar. Might I suggest fractals if you're new here</h4>
+      <div id='introductions'>
+        <h2>Hello! This is my website!</h2>
+        <h4>
+          I'm Sean, a Computer Science Masters Student at Stanford.
+          I enjoy math and making things that I can play with!
+        </h4>
+        <h4>
+          Explore some of my small projects on the left sidebar. 
+          Might I suggest fractals if you're new here
+        </h4>
+      </div>
+    <div id='ip-address' class='content-page'>
+      <p>
+      Curious about your IP address and what we can learn from it?
+      <a href='./pages/ip-address.html'>Click Here</a>
+      </p>
+    </div>
+    <div id='prng' class='content-page'>
+      <p>
+      My CS224B project! I look into various 
+      <a href='./pages/prng.html'>PsuedoRandom Number Generators</a>.
+      </p>
+    </div>
   </div>
   <script>
     // All pages in website:
-    let pages = ['prime_spiral', 'chaos_game', 'stars', 'fractals',
-                 'multiplication', 'flower_ratios', 'recaman', 'boids', 'penrose',
-                 'sorting', 'chess', 'faces'];
-    // Create Sidenav
-    for (let i = 0; i < pages.length; i++) {
-      let ref = document.createElement('A');
-      ref.setAttribute('href', './pages/sides/' + pages[i] + '/' + pages[i] + '.html');
-      ref.setAttribute('class', 'page')
-      ref.setAttribute('id', pages[i]);
+    const pages = [
+      'prime_spiral',
+      'chaos_game',
+      'stars',
+      'fractals',
+      'multiplication',
+      'flower_ratios',
+      'recaman',
+      'boids',
+      'penrose',
+      'sorting',
+      'chess',
+      'url_anime',
+    ];
+
+    function get_page_label(i) {
       let text = pages[i].charAt(0).toUpperCase() + pages[i].slice(1);
-      ref.appendChild(document.createTextNode(text.replace('_', ' ')));
-      document.getElementsByClassName('sidenav')[0].appendChild(ref);
+      text = text.replace(/_(\w)/, (x, y) => ' ' + y.toUpperCase());
+      return text;
     }
+
+    (function create_sidenav() {
+      for (let i = 0; i < pages.length; i++) {
+        let ref = document.createElement('A');
+        const page_path = './pages/sides/'+pages[i]+'/'+pages[i]+'.html';
+        ref.setAttribute('href', page_path);
+        ref.setAttribute('class', 'page')
+        ref.setAttribute('id', pages[i]);
+        ref.appendChild(document.createTextNode(get_page_label(i)));
+        document.getElementsByClassName('sidenav')[0].appendChild(ref);
+      }
+    })();
   </script>
   <script type='text/javascript' src='js/drawing_lib.js'></script>
   <script id='js' type='text/javascript' src='js/indicies.js'></script>
