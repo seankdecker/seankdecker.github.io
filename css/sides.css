@@ -17,9 +17,8 @@ body {
   filter: brightness(50%); */
 }
 canvas {
-  border:0px;
+  border: 0px;
   margin: auto;
-  display: block;
 }
 p {
   margin: 6px;

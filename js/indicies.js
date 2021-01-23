@@ -14,13 +14,13 @@ var scripts = {
       const hr = now.getHours() % 12 + now.getMinutes() / 60 + now.getSeconds() / 360;
       const mn = now.getMinutes() + now.getSeconds() / 60;
       const sc = now.getSeconds() + now.getMilliseconds() / 1000;
-      clock.drawEllipse(x, y, radX, radY,
+      clock.ellipse(x, y, radX, radY,
         -1 * Math.PI/2, 0, 2*Math.PI * hr / 12,
         false, "hsl("+ 360 * hr / 12 +", 100%, 50%)", lineWidth + 1);
-      clock.drawEllipse(x, y, radX - lineWidth, radY - lineWidth,
+      clock.ellipse(x, y, radX - lineWidth, radY - lineWidth,
         -1 * Math.PI/2, 0, 2*Math.PI * mn / 60,
         false, "hsl("+ 360 * mn / 60 +", 100%, 50%)", lineWidth + 1);
-      clock.drawEllipse(x, y, radX - 2 * lineWidth, radY - 2 * lineWidth,
+      clock.ellipse(x, y, radX - 2 * lineWidth, radY - 2 * lineWidth,
         -1 * Math.PI/2, 0, 2*Math.PI * sc / 60,
         false, "hsl("+ 360 * sc / 60 +", 100%, 50%)", lineWidth + 1);
     });
@@ -37,7 +37,7 @@ var scripts = {
     clock.c.width = 50;
     clock.animate(() => {
       const now = new Date();
-      clock.drawText(now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds(), 0, clock.c.height);
+      clock.text(now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds(), 0, clock.c.height);
     });
   },
   pokemon: () => {
@@ -72,15 +72,15 @@ var scripts = {
         var oppImg = new Image();
         oppImg.onload = () => {
           clock.clear();
-          clock.drawImage(myImg, 0, 150, 150, 150);
-          clock.drawImage(oppImg, 200, 0, 150, 150);
+          clock.image(myImg, 0, 150, 150, 150);
+          clock.image(oppImg, 200, 0, 150, 150);
         }
         oppImg.src = "pictures/pokemon/pokemon_gen1_sprites/"+game+"/"+opp+".png";
         var myImg = new Image();
         myImg.onload = () => {
           clock.clear();
-          clock.drawImage(myImg, 0, 150, 150, 150);
-          clock.drawImage(oppImg, 200, 0, 150, 150);
+          clock.image(myImg, 0, 150, 150, 150);
+          clock.image(oppImg, 200, 0, 150, 150);
           setTimeout(() => { window.requestAnimationFrame(() => { animation(); }); }, 10000);
         }
         let myPoke = starter + Math.floor(hr * 3 / 24) + 1;
