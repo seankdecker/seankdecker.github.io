@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <title>PRNGs</title>
+    <meta name='author' content='sean'/>
+    <script id='js' type='text/javascript' src='/js/drawing_lib.js'></script>
+  </head>
+  <body>
+    <canvas id='python-random' width='500' height='500' style={background:#000}></canvas>
+    <canvas id='middle-square-method' width='500' height='500' style={background:#000}></canvas>
+    <canvas id='linear-congruential-generator' width='500' height='500' style={background:#000}></canvas>
+    <canvas id='mersenne-twister' width='500' height='500' style={background:#000}></canvas>
+    <script type='application/javascript'>
+      function getJson(url, callback) {
+        let xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = () => {
+          if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            callback(xmlHttp.responseText);
+        }
+        xmlHttp.open('GET', url, true); // true for asynchronous 
+        xmlHttp.send(null);
+      }
+    
+      /* 
+      paint bits of ctx: canvas.ctx according to static: array,
+      params:
+        ctx: a canvas 2d context
+        static: an array of random floats in range [0, 1]
+      */
+      function paintStatic(canvas, static) {
+        let idata = canvas.ctx.createImageData(canvas.width, canvas.height);
+        let staticEnd = static.length; // to circle around static array
+        for (let i = 0; i < idata.data.length/4 + 1; i++) {
+          idata.data[4*i] = static[3*i] * 255;// < 0.5 ? 0 : 255; // R value
+          idata.data[4*i + 1] = static[3*i + 1] * 255; //< 0.5 ? 0 : 255; // G value
+          idata.data[4*i + 2] = static[3*i + 2] * 255; //< 0.5 ? 0 : 255; // B value
+          idata.data[4*i + 3] = 255;//Math.random() * 255; //// A value
+        }
+        canvas.ctx.putImageData(idata, 0, 0);
+      }
+      
+      /*
+      create a static image on the canvas with id algorithm: string
+      get this static by making a GET request to /prng?alg=$algorithm
+      */
+      function createStaticImage(algorithm) {
+        let canvas = new Canvas(algorithm);
+        let pixelDepth = canvas.width * canvas.height * 3;
+        let seed = 143595;
+        getJson(`/prng?alg=${algorithm}&count=${pixelDepth}&seed=${seed}`, (json) => {
+          let res = JSON.parse(json);
+          let static = res.randomNumbers;
+          for (let i = 0; i < pixelDepth; i++)
+            static.push(Math.random());
+          paintStatic(canvas, static);
+        });
+      }
+      
+      function randomnessAPI(api) {
+        let canvas = new Canvas(api);
+        let pixelDepth = canvas.width * canvas.height * 3;
+        // generate API call
+        const num = 1000, min = 0, max = 999999, col = 1, base = 10, format = 'plain', rnd = 'new';
+        const url = `https://www.random.org/integers/`
+        const args = `?num=${num}&min=${min}&max=${max}&col=${col}&base=${base}&format=${format}&rnd=${rnd}`
+        // Init static
+        let static = new Array(pixelDepth);
+        for (let i = 0; i < pixelDepth; i += num) {
+          getJson(url + args, (res) => {
+            res = res.split('\n');
+            for (let j = i; j < num; j++)
+              static[i] = parseInt(res[j]) / max;
+            if (i + num >= pixelDepth)
+              paintStatic(canvas, static);
+          });
+        }
+      }
+      
+      createStaticImage('python-random');
+      createStaticImage('middle-square-method');
+      createStaticImage('linear-congruential-generator');
+      createStaticImage('mersenne-twister');
+      // randomnessAPI('random-dot-org');
+    </script>
+  </body>
+</html>

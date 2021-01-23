@@ -1,7 +1,11 @@
+# dev files
+*.swp
+*.swo
 # ignore media that isn't needed
 /music
 /videos
 /models
+/pictures
 # misc
 .DS_Store
 
