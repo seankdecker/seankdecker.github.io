@@ -4,6 +4,8 @@
 - mostly used for making some type of visualization of math things
 - but it also has some strange quirks
 
+## I'm Sean
+
 # TODO
 
 * hailstones/ collatz conjecture
