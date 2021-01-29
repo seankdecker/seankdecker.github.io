@@ -133,8 +133,10 @@
     }
 
     const side = document.getElementById('sidenav');
-    side.addEventListener("mouseover", () => { canvas.c.addEventListener("click", jump); } );
-    side.addEventListener("mouseout", () => { canvas.c.removeEventListener("click", jump); } );
+    const canvasElem = document.getElementById('canvas');
+    canvasElem.addEventListener("click",  jump);
+    // side.addEventListener("mouseover", () => { canvasElem.addEventListener("click", jump); } );
+    // side.addEventListener("mouseout", () => { canvasElem.removeEventListener("click", jump); } );
   </script>
 </body>
 </html>
