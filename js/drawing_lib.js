@@ -6,7 +6,7 @@ class Canvas {
       id of canvas - string */
   constructor(id) {
     this.c = document.getElementById(id);
-    this.ctx = this.c.getContext('2d', {alpha: false});
+    this.ctx = this.c.getContext('2d', {alpha: true});
     this.width = this.c.width;
     this.height = this.c.height;
     this.playing = false;
@@ -20,8 +20,10 @@ class Canvas {
   // draw point at x, y with size (radius ) len on CTX
   drawPoint(x, y, len, style="#000000") {
     this.ctx.beginPath();
+    this.ctx.strokeStyle = style;
     this.ctx.arc(x, y, len, 0, 2 * Math.PI);
     this.ctx.stroke();
+    this.ctx.closePath();
   }
 
   // draw line from x1, y1 to x2, y2
@@ -74,16 +76,15 @@ class Canvas {
   }
 
   // draw text text at x, y (defines botton left of text) with font and style
-  drawText(text, x, y, font="11px Arial", style="#000000") {
+  text(text, x, y, font="11px Arial", style="#000000") {
     this.ctx.font = font;
     this.ctx.fillStyle = style;
     this.ctx.fillText(text, x, y);
   }
 
   // draw img img at x, y (defines botton left of text)
-  drawImage(img, x, y, width, height) {
-    if (width && height) {this.ctx.drawImage(img, x, y, width, height);}
-    else {this.ctx.drawImage(img, x, y);}
+  image(img, x, y, width=undefined, height=undefined) {
+    this.ctx.drawImage(img, x, y, width, height);
   }
 
   // define animation which plays animation with waittime

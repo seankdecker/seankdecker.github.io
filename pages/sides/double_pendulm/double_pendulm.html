@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<!--
+Resources:
+Double Pendulm - The Coding Train
+  https://www.youtube.com/watch?v=uWzPe_S-RVE&ab_channel=TheCodingTrain
+-->
+<html lang='en-US'>
+<head>
+  <title>Double Pendulum</title>
+  <meta name='author' content='Sean' />
+  <link rel='stylesheet' type='text/css' href='../../../css/sidebar.css' />
+  <style>
+    body {
+      background-color: black;
+      display: grid;
+      grid-template-columns: 100px auto;
+      grid-template-rows: 50px auto;
+      grid-template-areas:
+        "header header"
+        "sidebar canvas";
+    }
+    #sidebar {
+      grid-area: sidebar;
+      /* z-index: 1; */
+      overflow-x: visible;
+    }
+    .canvas-wrapper {
+      grid-area: canvas;
+      position: relative;
+      width: 750px;
+      height: 750px;
+    }
+    .canvas-wrapper canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 750px;
+      height: 750px;
+    }
+  </style>
+  <!-- Adding Popup Explanation-->
+  <script id='js' type='text/javascript' src='../../../js/add_popup.js'>
+  </script>
+  <script>
+    // addPopup([
+    //   'Canonical Example of Chaotic behavior from a simple ruleset.',
+    //   'The Double Pendulum!'
+    // ]);
+  </script>
+  <link rel='stylesheet' type='text/css' href='../../../css/popup.css' />
+</head>
+<body>
+  <div id='sidebar'>
+  </div>
+  <div class='canvas-wrapper'>
+    <canvas id='canvas'  width='3000' height='3000'></canvas>
+    <canvas id='background-canvas'  width='3000' height='3000'></canvas>
+  </div>
+  <script type='module'>
+    import { Animation, Canvas, Sidebar, StyleConstants } from '../../../js/drawingLib/index.js';
+
+    const canvas = new Canvas('canvas');
+    const backCanvas = new Canvas('background-canvas');
+    
+    const white = StyleConstants.color.white;
+    const red = StyleConstants.color.red;
+    const lineWeight = 10;
+    const xStart = canvas.width / 2;
+    const yStart = canvas.height / 4;
+    const grav = 1;
+    const friction = 0.999; // multiplies velocity to dampen pendulum
+
+    class DoublePendulum {
+      constructor(r0, r1, m0, m1, a0, a1) {
+        this.r0 = r0;
+        this.r1 = r1;
+        this.m0 = m0;
+        this.m1 = m1;
+        this.a0 = a0;
+        this.a1 = a1;
+        this.a0_v = 0;
+        this.a1_v = 0;
+        this.x0;
+        this.y0;
+        this.x1;
+        this.y1;
+      }
+
+      setR0(val) {
+        this.r0 = val;
+      }
+
+      saveTrace([x0, y0], [x1, y1]) {
+        this.x0 = x0;
+        this.y0 = y0;
+        this.x1 = x1;
+        this.y1 = y1;
+      }
+
+      drawTrace(myCanvas, color='#FF0000') {
+        if (this.x0 != null) {
+          myCanvas.point(this.x0, this.y0, 5, color, true);
+          myCanvas.point(this.x1, this.y1, 5, color, true);
+        }
+      }
+
+      draw(myCanvas) { 
+        const x0 = xStart + this.r0 * Math.sin(this.a0);
+        const y0 = yStart + this.r0 * Math.cos(this.a0);
+        myCanvas.line(xStart, yStart, x0, y0, white, lineWeight);
+        myCanvas.point(x0, y0, this.m0, white);
+
+        const x1 = x0 + this.r1 * Math.sin(this.a1);
+        const y1 = y0 + this.r1 * Math.cos(this.a1);
+        myCanvas.line(x0, y0, x1, y1, white, lineWeight);
+        myCanvas.point(x1, y1, this.m1, white);
+
+        this.saveTrace([x0, y0], [x1, y1]);
+      }
+
+      swing() {
+        const m0 = this.m0, m1 = this.m1;
+        const a0 = this.a0, a1 = this.a1;
+        const a0_v = this.a0_v, a1_v = this.a1_v;
+        const r0 = this.r0, r1 = this.r1;
+        const denominatorMult = (2 * m0 + m1 - m1 * Math.cos(2 * a0 - 2 * a1));
+
+        let numer0 = -1 * grav * (2 * m0 + m1) * Math.sin(a0); 
+        let numer1 = -1 * grav * m1 * Math.sin(a0 - 2 * a1);
+        let numer2 = -2 * m1 * Math.sin(a0-a1);
+        let numer3 = Math.pow(a1_v,2) * r1 + Math.pow(a0_v,2) * r0 * Math.cos(r0-r1);
+        const a0_a = (numer0 + numer1 + numer2 * numer3) / (r0 * denominatorMult);
+        
+        numer0 = 2 * Math.sin(a0 - a1);
+        numer1 = Math.pow(a0_v,2) * r0 * (m0+m1);
+        numer2 = grav * (m0 + m1) * Math.cos(a0);
+        numer3 = Math.pow(a1_v,2) * r1 * m1 * Math.cos(r0 - r1);
+        const a1_a = (numer0 * (numer1 + numer2 + numer3)) / (r1 * denominatorMult);
+
+        this.a0_v += a0_a;
+        this.a1_v += a1_a;
+        // friction
+        this.a0_v *= friction;
+        this.a1_v *= friction;
+        this.a0 += this.a0_v;
+        this.a1 += this.a1_v;
+      }
+    }
+
+    const pendulum = new DoublePendulum(1000, 900, 20, 20, Math.PI / 2, 0);
+
+    const animation = new Animation(canvas, (t) => {
+      pendulum.draw(canvas);
+      pendulum.swing();
+    }, 10);
+
+    const traceAnimation = new Animation(backCanvas, (t) => {
+      pendulum.drawTrace(backCanvas, StyleConstants.color.blue);
+    }, 10, false);
+
+    function resetPendulum(pendulum, animation, traceAnimation) {
+      const newPendulum = new DoublePendulum(
+        pendulum.r0, pendulum.r1,pendulum.m0, pendulum.m1, pendulum.a0, pendulum.a1
+      );
+      animation.stop();
+      traceAnimation.stop();
+    }
+      
+    const sidebar = new Sidebar('sidebar');
+    sidebar.addToggle('pause', () => {
+      animation.togglePlay();
+      traceAnimation.togglePlay();
+    }, 'play');
+
+    sidebar.addSlider('Slider for Sean', (val) => pendulum.setR0(val), () => pendulum.r0, 900, 1020);
+    
+  </script>
+</body>
+</html>

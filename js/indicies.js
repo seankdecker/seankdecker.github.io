@@ -37,7 +37,7 @@ var scripts = {
     clock.c.width = 50;
     clock.animate(() => {
       const now = new Date();
-      clock.drawText(now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds(), 0, clock.c.height);
+      clock.text(now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds(), 0, clock.c.height);
     });
   },
   pokemon: () => {
@@ -60,7 +60,7 @@ var scripts = {
       page.setAttribute("style", animeStyle + imgStyle);
     }
     // make clock into pokemon battle
-    clock.c.height = 600, clock.c.width = 600;
+    clock.c.height = 400, clock.c.width = 400;
     let starters = [1, 3, 6];
     let starter = starters[Math.floor(starters.length * Math.random())];
     // build clock with special function
@@ -72,15 +72,15 @@ var scripts = {
         var oppImg = new Image();
         oppImg.onload = () => {
           clock.clear();
-          clock.drawImage(myImg, 0, 150, 150, 150);
-          clock.drawImage(oppImg, 200, 0, 150, 150);
+          clock.image(myImg, 0, 150, 150, 150);
+          clock.image(oppImg, 200, 0, 150, 150);
         }
         oppImg.src = "pictures/pokemon/pokemon_gen1_sprites/"+game+"/"+opp+".png";
         var myImg = new Image();
         myImg.onload = () => {
           clock.clear();
-          clock.drawImage(myImg, 0, 150, 150, 150);
-          clock.drawImage(oppImg, 200, 0, 150, 150);
+          clock.image(myImg, 0, 150, 150, 150);
+          clock.image(oppImg, 200, 0, 150, 150);
           setTimeout(() => { window.requestAnimationFrame(() => { animation(); }); }, 10000);
         }
         let myPoke = starter + Math.floor(hr * 3 / 24) + 1;
