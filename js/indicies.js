@@ -14,13 +14,13 @@ var scripts = {
       const hr = now.getHours() % 12 + now.getMinutes() / 60 + now.getSeconds() / 360;
       const mn = now.getMinutes() + now.getSeconds() / 60;
       const sc = now.getSeconds() + now.getMilliseconds() / 1000;
-      clock.ellipse(x, y, radX, radY,
+      clock.drawEllipse(x, y, radX, radY,
         -1 * Math.PI/2, 0, 2*Math.PI * hr / 12,
         false, "hsl("+ 360 * hr / 12 +", 100%, 50%)", lineWidth + 1);
-      clock.ellipse(x, y, radX - lineWidth, radY - lineWidth,
+      clock.drawEllipse(x, y, radX - lineWidth, radY - lineWidth,
         -1 * Math.PI/2, 0, 2*Math.PI * mn / 60,
         false, "hsl("+ 360 * mn / 60 +", 100%, 50%)", lineWidth + 1);
-      clock.ellipse(x, y, radX - 2 * lineWidth, radY - 2 * lineWidth,
+      clock.drawEllipse(x, y, radX - 2 * lineWidth, radY - 2 * lineWidth,
         -1 * Math.PI/2, 0, 2*Math.PI * sc / 60,
         false, "hsl("+ 360 * sc / 60 +", 100%, 50%)", lineWidth + 1);
     });
@@ -60,7 +60,7 @@ var scripts = {
       page.setAttribute("style", animeStyle + imgStyle);
     }
     // make clock into pokemon battle
-    clock.c.height = 600, clock.c.width = 600;
+    clock.c.height = 400, clock.c.width = 400;
     let starters = [1, 3, 6];
     let starter = starters[Math.floor(starters.length * Math.random())];
     // build clock with special function

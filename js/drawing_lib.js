@@ -18,14 +18,14 @@ class Canvas {
   }
 
   // draw point at x, y with size (radius ) len on CTX
-  point(x, y, len, style="#000000") {
+  drawPoint(x, y, len, style="#000000") {
     this.ctx.beginPath();
     this.ctx.arc(x, y, len, 0, 2 * Math.PI);
     this.ctx.stroke();
   }
 
   // draw line from x1, y1 to x2, y2
-  line(x1, y1, x2, y2, style="#000000", width=1) {
+  drawLine(x1, y1, x2, y2, style="#000000", width=1) {
     this.ctx.beginPath();
     this.ctx.moveTo(x1, y1);
     this.ctx.lineTo(x2, y2);
@@ -37,7 +37,7 @@ class Canvas {
 
   // draw arc centered at x, y with radius r
   // starting at startTheta ending at endTheta
-  arc(x, y, r, startTheta=0, endTheta=2*Math.PI, style="#000000", width=1) {
+  drawArc(x, y, r, startTheta=0, endTheta=2*Math.PI, style="#000000", width=1) {
     this.ctx.beginPath();
     this.ctx.arc(x, y, r, startTheta, endTheta);
     this.ctx.strokeStyle = style;
@@ -48,7 +48,7 @@ class Canvas {
   // draw ellpise centered at x, y with x radius radiusX and y radius radiusY
   // the ellipse is rotated by rotation radians and starts at startAngle and
   // ends at endAngle
-  ellipse(x, y, radiusX, radiusY, rotation=0, startAngle=0, endAngle=2*Math.PI,
+  drawEllipse(x, y, radiusX, radiusY, rotation=0, startAngle=0, endAngle=2*Math.PI,
               anticlockwise=false, style="#000000", width=1) {
     this.ctx.beginPath();
     this.ctx.ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle,
@@ -59,7 +59,7 @@ class Canvas {
   }
 
   // draw polygon with points in points,
-  polygon(points, fillStyle=null, style="#000000", width=1) {
+  drawPoly(points, fillStyle=null, style="#000000", width=1) {
     this.ctx.beginPath();
     this.ctx.moveTo(points[0][0], points[0][1]);
     for (let i = 1; i < points.length; i++) {

@@ -4,8 +4,6 @@
 - mostly used for making some type of visualization of math things
 - but it also has some strange quirks
 
-## I'm Sean
-
 # TODO
 
 * hailstones/ collatz conjecture
@@ -14,3 +12,11 @@
 * sorting algorithms
 * play videos/music
 * snowflakes, http://www.snowcrystals.com/
+
+# Dev Notes
+
+- Git authentication happens through HTTPS
+  - to `https://seankdecker@github.com/seankdecker/seankdecker.github.io`
+  - b/c I use 2FA, I needed to create a Personal Access Token on github
+  - it is stored using `git config credential.helper store`, since
+  my global config is using `user: seanktakahashi`
