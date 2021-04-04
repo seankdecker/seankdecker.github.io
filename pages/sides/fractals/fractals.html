@@ -40,6 +40,36 @@ Paul Bourke -
       'I think the fractals that are made are quite pretty!'
     ]);
   </script>
+  <style id='style'>
+    #bunny {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      height: 60px;
+    }
+
+    .egg {
+      position: absolute;
+      height: 26px;
+    }
+
+    #purple-egg {
+      top: 467px;
+      left: 440px;
+    }
+
+    #pink-egg {
+      z-index: 2;
+      top: 0px;
+      left: 15px;
+      transform: rotate(40deg);
+    }
+
+    #green-egg {
+      bottom: 0;
+      right: 60px;
+    }
+  </style>
   <link rel="stylesheet" type="text/css" href="../../../css/popup.css" />
 </head>
 <body>
@@ -47,6 +77,28 @@ Paul Bourke -
   </div>
 
   <canvas class="row_canvas" id="canvas"  width='750' height='750' margin='10px'></canvas>
+  <a href="https://egghunt.seanilu.com/pages/passwordPage.html" onclick="return foundEgg('purple-egg') && hasAllEggs()"><img id="purple-egg"
+                                                                                                                            class="egg" src="/pictures/purpleEgg.png" /></a>
+  <a href="https://egghunt.seanilu.com/pages/passwordPage.html" onclick="return foundEgg('pink-egg') && hasAllEggs()"><img id="pink-egg" class="egg"
+                                                                                                                                        src="/pictures/pinkEgg.png" /></a>
+  <a href="https://egghunt.seanilu.com/pages/passwordPage.html" onclick="return foundEgg('green-egg') && hasAllEggs()"><img id="green-egg"
+                                                                                                                           class="egg" src="/pictures/greenEgg.png" /></a>
+  <a href="https://egghunt.seanilu.com/pages/bunny.html"><img id="bunny" src="/pictures/bunny.png" /></a>
+
+  <script>
+    let eggs = 0;
+    const totalEggs = 3;
+
+    function hasAllEggs() {
+      eggs += 1;
+      return eggs === totalEggs;
+    }
+
+    function foundEgg(eggId) {
+      document.getElementById(eggId).remove();
+      return true;
+    }
+  </script>
   <script type="text/javascript" src="../../../js/drawing_lib.js"></script>
   <script type="text/javascript">
     // Setup Canvas
