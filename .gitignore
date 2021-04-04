@@ -5,7 +5,8 @@
 /music
 /videos
 /models
-/pictures
+/pictures/*
+!/pictures/decorated*.png
 # misc
 .DS_Store
 
