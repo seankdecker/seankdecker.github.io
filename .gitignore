@@ -6,8 +6,7 @@
 /videos
 /models
 /pictures/*
-!/pictures/*Egg.png
-!/pictures/bunny.png
+!/pictures/decorated*.png
 # misc
 .DS_Store
 
