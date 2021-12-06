@@ -13,37 +13,13 @@
   <meta name='author' content='Sean'/>
   <link id='style' rel='stylesheet' type='text/css' href='css/indicies/index.css' />
   <script id='js' type='text/javascript' src='js/login.js'></script>
-  <!--<script id='js' type='text/javascript' src='js/user-tracking.js'></script>-->
-  <style id='style'>
-    #bunny {
-      position: absolute;
-      top: 40px;
-      left: 720px;
-      height: 60px;
+  <script id='js' type='text/javascript' src='js/user-tracking.js'></script>
+  <script type="application/javascript">
+    function getIP(json) {
+      console.log("My public IP address is: ", json.ip);
     }
-
-    .egg {
-      position: absolute;
-      height: 26px;
-    }
-
-    #purple-egg {
-      top: 467px;
-      left: 440px;
-    }
-
-    #pink-egg {
-      top: 292px;
-      left: 335px;
-      transform: rotate(40deg);
-    }
-
-    #green-egg {
-      top: 320px;
-      left: 670px;
-      transform: rotate(-10deg);
-    }
-  </style>
+  </script>
+  <script type="application/javascript" src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
 </head>
 <body>
   <div class='sidenav'> 
@@ -79,29 +55,6 @@
       </p>
     </div>
   </div>
-
-  <a href="https://egghunt.seanilu.com/pages/welcomeBack.html" onclick="return foundEgg('purple-egg') && hasAllEggs()"><img id="purple-egg"
-      class="egg" src="/pictures/purpleEgg.png" /></a>
-  <a href="https://egghunt.seanilu.com/pages/welcomeBack.html" onclick="return foundEgg('pink-egg') && hasAllEggs()"><img id="pink-egg" class="egg"
-      src="/pictures/pinkEgg.png" /></a>
-  <a href="https://egghunt.seanilu.com/pages/welcomeBack.html" onclick="return foundEgg('green-egg') && hasAllEggs()"><img id="green-egg"
-      class="egg" src="/pictures/greenEgg.png" /></a>
-  <a href="https://egghunt.seanilu.com/pages/bunny.html"><img id="bunny" src="/pictures/bunny.png" /></a>
-
-  <script>
-    let eggs = 0;
-    const totalEggs = 3;
-
-    function hasAllEggs() {
-      eggs += 1;
-      return eggs === totalEggs;
-    }
-
-    function foundEgg(eggId) {
-      document.getElementById(eggId).remove();
-      return true;
-    }
-  </script>
   <script>
     // All pages in website:
     const pages = [

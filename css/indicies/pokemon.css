@@ -5,8 +5,7 @@ body {
   margin: 0px;
   background-image: url('../../pictures/pokemon/fire-red-safari.png');
   background-repeat: no-repeat;
-  background-size: cover;
-  overflow: hidden;
+   background-size: cover;
 }
 
 .title {
