@@ -20,3 +20,6 @@
   - b/c I use 2FA, I needed to create a Personal Access Token on github
   - it is stored using `git config credential.helper store`, since
   my global config is using `user: seanktakahashi`
+- Hosted from an S3 bucket, SSL certificate granted from ACM, 
+  which is linked with Cloudfront
+  - [docs](https://channaly.medium.com/how-to-host-static-website-with-https-using-amazon-s3-251434490c59)
